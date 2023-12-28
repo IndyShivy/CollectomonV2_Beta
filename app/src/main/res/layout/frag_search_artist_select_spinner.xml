@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Custom Dropdown Container -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dropdownContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Box Showing Selected Item -->
+    <TextView
+        android:id="@+id/artistName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="First Item" />
+
+    <!-- The ListView for all items, initially gone or invisible -->
+    <ListView
+        android:id="@+id/itemsListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</LinearLayout>
+
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    android:background="@android:color/transparent"-->
+<!--    android:padding="8dp">-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/artistName"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:textColor="@android:color/black"-->
+<!--        android:textSize="16sp" />-->
+
+<!--</LinearLayout>-->
+
+
+
+
+<!--    android:id="@+id/artistName"-->
+<!--    android:layout_width="346dp"-->
+<!--    android:layout_height="50dp"-->
+<!--    android:background="@drawable/frag_search_spinner_list"-->
+<!--    android:gravity="center"-->
+<!--    android:textColor="@android:color/black"-->
+<!--    android:textSize="16sp"-->
