@@ -16,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,11 +47,13 @@ public class SearchFragment extends Fragment {
     ActionBarDrawerToggle drawerToggle;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";
-    TextView viewArtistList;
+    TextView artistNameView;
     CustomSpinnerAdapter spinnerAdapter;
     Context context;
     EditText searchEditText;
     ImageButton addCards;
+    ListView loadArtistList;
+    View overlay;
     private CardAdapter cardAdapter;
     private List<CardItem> cardItems;
     private CardDatabase db;
@@ -132,10 +136,64 @@ public class SearchFragment extends Fragment {
         Collections.sort(artistNames);
 
 
-        viewArtistList = rootView.findViewById(R.id.viewArtistList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, artistNames);
-        spinnerAdapter = new CustomSpinnerAdapter(context, artistNames);
-        viewArtistList.setAdapter(spinnerAdapter);
+        artistNameView = rootView.findViewById(R.id.artistName);
+        loadArtistList = rootView.findViewById(R.id.loadArtistList);
+        overlay = rootView.findViewById(R.id.overlay);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        overlay.setLayoutParams(params);
+
+        //add select artist to list
+        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>(context,R.layout.frag_search_artist_dropdown, artistNames);
+        loadArtistList.setAdapter(listViewAdapter);
+        artistNameView.setText("");
+
+
+        artistNameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toggle ListView visibility
+                if(loadArtistList.getVisibility() == View.GONE) {
+                    loadArtistList.setVisibility(View.VISIBLE);
+                    overlay.setVisibility(View.VISIBLE);
+                } else {
+                    loadArtistList.setVisibility(View.GONE);
+                    overlay.setVisibility(View.GONE);
+                }
+            }
+        });
+        loadArtistList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Example action on click: Update TextView with clicked item and hide ListView
+                String selectedArtist = (String) parent.getItemAtPosition(position);
+                artistNameView.setText(selectedArtist);
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
+                webScrape(selectedArtist);
+            }
+        });
+
+        overlay.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (loadArtistList.getVisibility() == View.VISIBLE) {
+                        loadArtistList.setVisibility(View.GONE);
+                        overlay.setVisibility(View.GONE);
+                    }
+                }
+                return true;
+            }
+        });
+
+
+
+
+
+
+
+
 
         searchEditText = rootView.findViewById(R.id.searchCard);
         searchEditText.addTextChangedListener(textWatcher);
@@ -146,36 +204,38 @@ public class SearchFragment extends Fragment {
         recyclerView.setAdapter(cardAdapter);
 
 
-        viewArtistList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                webScrape(viewArtistList.getSelectedItem().toString());
-                if (!searchEditText.getText().toString().equals("")) {
-                    searchEditText.setText("");
-                }
-            }
+//        viewArtistList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                webScrape(viewArtistList.getSelectedItem().toString());
+//                if (!searchEditText.getText().toString().equals("")) {
+//                    searchEditText.setText("");
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//        viewArtistList.setOnTouchListener(new View.OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    // Get the height of a single item in the dropdown list
+//                    int itemHeight = 48;
+//                    // Calculate the total height for the number of items you want to
+//                    // display at a time
+//                    int totalHeight = itemHeight * 5; // Change this to the number of items you want to display at a time
+//                    // Set the dropdown height
+//                    viewArtistList.setDropDownVerticalOffset(totalHeight);
+//                }
+//                return false;
+//            }
+//        });
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
-        viewArtistList.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Get the height of a single item in the dropdown list
-                    int itemHeight = 48;
-                    // Calculate the total height for the number of items you want to
-                    // display at a time
-                    int totalHeight = itemHeight * 5; // Change this to the number of items you want to display at a time
-                    // Set the dropdown height
-                    viewArtistList.setDropDownVerticalOffset(totalHeight);
-                }
-                return false;
-            }
-        });
 
         addCards.setOnClickListener(v -> {
             List<CardItem> selectedCardItems = cardAdapter.getSelectedCardItems();
@@ -200,6 +260,11 @@ public class SearchFragment extends Fragment {
     }
 
     public void webScrape(String name) {
+        if (name.equals("Select Artist")) {
+            cardItems.clear();
+            cardAdapter.notifyDataSetChanged();
+            return;
+        }
         cardItems.clear();
         String stringWithoutGaps = name.replaceAll("\\s+", "");
         String modifiedName = stringWithoutGaps.toLowerCase();
