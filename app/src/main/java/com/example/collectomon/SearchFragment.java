@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -27,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +38,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,18 +50,44 @@ public class SearchFragment extends Fragment {
     ActionBarDrawerToggle drawerToggle;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";
-    TextView artistNameView;
+    private RecyclerView recyclerView;
+
+    String artistSelected;
+    TextView loadName;
     CustomSpinnerAdapter spinnerAdapter;
     Context context;
     EditText searchEditText;
     ImageButton addCards;
     ListView loadArtistList;
-    View overlay;
+    Button viewArtistList;
+    View overlay,artistView;
     private CardAdapter cardAdapter;
     private List<CardItem> cardItems;
     private CardDatabase db;
     private AppCompatActivity activity;
 
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (!hidden) {
+            // Fragment is no longer hidden
+
+            // Close the ListView if it's open
+            if (loadArtistList.getVisibility() == View.VISIBLE) {
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
+            }
+            if (artistSelected != null) {
+                webScrape(artistSelected);
+            }
+        }
+    }
 
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -107,6 +136,12 @@ public class SearchFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        // Close the ListView if it's open
+        if (loadArtistList.getVisibility() == View.VISIBLE) {
+            loadArtistList.setVisibility(View.GONE);
+            overlay.setVisibility(View.GONE);
+        }
+
         // Set up the onBackPressed callback
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
@@ -121,11 +156,21 @@ public class SearchFragment extends Fragment {
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.frag_search, container, false);
         context = requireContext();
         db = new CardDatabase(context);
-
         addCards = rootView.findViewById(R.id.addCardButton);
+        viewArtistList = rootView.findViewById(R.id.artistViewButton);
+        loadArtistList = rootView.findViewById(R.id.loadArtistList);
+        artistView = rootView.findViewById(R.id.artistView);
+        loadName = rootView.findViewById(R.id.loadName);
+        overlay = rootView.findViewById(R.id.overlay);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        overlay.setLayoutParams(params);
+
+
+        // Get the list of artist names from SharedPreferences
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
         List<String> artistNames = new ArrayList<>();
         Set<String> artistSet = sharedPreferences.getStringSet(ARTIST_KEY, null);
@@ -136,19 +181,19 @@ public class SearchFragment extends Fragment {
         Collections.sort(artistNames);
 
 
-        artistNameView = rootView.findViewById(R.id.artistName);
-        loadArtistList = rootView.findViewById(R.id.loadArtistList);
-        overlay = rootView.findViewById(R.id.overlay);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        overlay.setLayoutParams(params);
+        searchEditText = rootView.findViewById(R.id.searchCard);
+        searchEditText.addTextChangedListener(textWatcher);
+        recyclerView = rootView.findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        cardItems = new ArrayList<>();
+        cardAdapter = new CardAdapter(cardItems, context);
+        recyclerView.setAdapter(cardAdapter);
 
         //add select artist to list
         ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>(context,R.layout.frag_search_artist_dropdown, artistNames);
         loadArtistList.setAdapter(listViewAdapter);
-        artistNameView.setText("");
 
-
-        artistNameView.setOnClickListener(new View.OnClickListener() {
+        viewArtistList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Toggle ListView visibility
@@ -166,7 +211,9 @@ public class SearchFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Example action on click: Update TextView with clicked item and hide ListView
                 String selectedArtist = (String) parent.getItemAtPosition(position);
-                artistNameView.setText(selectedArtist);
+                //artistNameView.setText(selectedArtist);
+                artistSelected = selectedArtist;
+                loadName.setText(selectedArtist);
                 loadArtistList.setVisibility(View.GONE);
                 overlay.setVisibility(View.GONE);
                 webScrape(selectedArtist);
@@ -174,7 +221,6 @@ public class SearchFragment extends Fragment {
         });
 
         overlay.setOnTouchListener(new View.OnTouchListener() {
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -186,56 +232,6 @@ public class SearchFragment extends Fragment {
                 return true;
             }
         });
-
-
-
-
-
-
-
-
-
-        searchEditText = rootView.findViewById(R.id.searchCard);
-        searchEditText.addTextChangedListener(textWatcher);
-        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        cardItems = new ArrayList<>();
-        cardAdapter = new CardAdapter(cardItems, context);
-        recyclerView.setAdapter(cardAdapter);
-
-
-//        viewArtistList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                webScrape(viewArtistList.getSelectedItem().toString());
-//                if (!searchEditText.getText().toString().equals("")) {
-//                    searchEditText.setText("");
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//        viewArtistList.setOnTouchListener(new View.OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (event.getAction() == MotionEvent.ACTION_UP) {
-//                    // Get the height of a single item in the dropdown list
-//                    int itemHeight = 48;
-//                    // Calculate the total height for the number of items you want to
-//                    // display at a time
-//                    int totalHeight = itemHeight * 5; // Change this to the number of items you want to display at a time
-//                    // Set the dropdown height
-//                    viewArtistList.setDropDownVerticalOffset(totalHeight);
-//                }
-//                return false;
-//            }
-//        });
-
-
 
         addCards.setOnClickListener(v -> {
             List<CardItem> selectedCardItems = cardAdapter.getSelectedCardItems();

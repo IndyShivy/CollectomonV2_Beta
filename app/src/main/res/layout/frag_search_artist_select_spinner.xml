@@ -9,7 +9,7 @@
 
     <!-- Box Showing Selected Item -->
     <TextView
-        android:id="@+id/artistName"
+        android:id="@+id/artistViewButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="First Item" />

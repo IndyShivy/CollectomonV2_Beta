@@ -11,7 +11,7 @@
 
 
     <View
-        android:id="@+id/border2"
+        android:id="@+id/artistView"
         android:layout_width="366dp"
         android:layout_height="62dp"
         android:layout_centerInParent="true"
@@ -45,7 +45,7 @@
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/border2"
+        app:layout_constraintTop_toBottomOf="@+id/artistView"
         tools:visibility="visible" />
 
 
@@ -86,11 +86,11 @@
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/border2"
+        app:layout_constraintBottom_toBottomOf="@+id/artistView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.903"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/border2"
+        app:layout_constraintTop_toTopOf="@+id/artistView"
         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
     <LinearLayout

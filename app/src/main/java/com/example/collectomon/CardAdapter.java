@@ -24,19 +24,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     private CardDatabase databaseHelper;
     ArrayList<CardItem> cardStuff;
 
+
     public CardAdapter(List<CardItem> cardItems, Context context) {
         this.cardItems = cardItems;
         this.context = context;
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_cardadapter_item, parent, false);
-        databaseHelper = new CardDatabase(context);
-        cardStuff = new ArrayList<>();
-        return new ViewHolder(view);
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     public void filterList(List<CardItem> filteredList) {
@@ -44,6 +37,65 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    @Override
+    public int getItemCount() {
+        return cardItems.size();
+    }
+
+
+
+    public List<CardItem> getSelectedCardItems() {
+        List<CardItem> selectedItems = new ArrayList<>();
+        for (CardItem cardItem : cardItems) {
+            if (cardItem.isChecked()) {
+                selectedItems.add(cardItem);
+                cardItem.setChecked(false);
+            }
+        }
+        return selectedItems;
+    }
+
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView imageView;
+        TextView cardNameTextView;
+        TextView setDetailsTextView;
+        TextView cardDetailsTextView;
+        CheckBox checkbox;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.imageView);
+            cardNameTextView = itemView.findViewById(R.id.cardNameTextView);
+            setDetailsTextView = itemView.findViewById(R.id.setDetailsTextView);
+            cardDetailsTextView = itemView.findViewById(R.id.cardDetailsTextView);
+            checkbox = itemView.findViewById(R.id.checkbox);
+            itemView.setOnClickListener(v -> checkbox.setChecked(!checkbox.isChecked()));
+        }
+    }
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_cardadapter_item, parent, false);
+//        databaseHelper = new CardDatabase(context);
+//        cardStuff = new ArrayList<>();
+//        return new ViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_cardadapter_item, parent, false);
+        databaseHelper = new CardDatabase(context);
+        cardStuff = new ArrayList<>();
+        ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int position = viewHolder.getAdapterPosition();
+            CardItem cardItem = cardItems.get(position);
+            cardStuff.add(cardItem);
+            if (isChecked) {
+                // Add the card to the database
+                databaseHelper.addCards(cardStuff);
+            }
+        });
+
+        return viewHolder;
+    }
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (position >= cardItems.size()) {
@@ -71,39 +123,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
         holder.checkbox.setOnCheckedChangeListener((buttonView, isChecked1) -> cardItem.setChecked(isChecked1));
     }
-
-    @Override
-    public int getItemCount() {
-        return cardItems.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView cardNameTextView;
-        TextView setDetailsTextView;
-        TextView cardDetailsTextView;
-        CheckBox checkbox;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.imageView);
-            cardNameTextView = itemView.findViewById(R.id.cardNameTextView);
-            setDetailsTextView = itemView.findViewById(R.id.setDetailsTextView);
-            cardDetailsTextView = itemView.findViewById(R.id.cardDetailsTextView);
-            checkbox = itemView.findViewById(R.id.checkbox);
-            itemView.setOnClickListener(v -> checkbox.setChecked(!checkbox.isChecked()));
-        }
-    }
-
-    public List<CardItem> getSelectedCardItems() {
-        List<CardItem> selectedItems = new ArrayList<>();
-        for (CardItem cardItem : cardItems) {
-            if (cardItem.isChecked()) {
-                selectedItems.add(cardItem);
-                cardItem.setChecked(false);
-            }
-        }
-        return selectedItems;
-    }
-
 }
+
+

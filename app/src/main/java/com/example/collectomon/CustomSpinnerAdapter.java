@@ -40,7 +40,7 @@ public class CustomSpinnerAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.frag_search_artist_select_spinner, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.artistName = convertView.findViewById(R.id.artistName);
+            viewHolder.artistName = convertView.findViewById(R.id.artistViewButton);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -60,7 +60,7 @@ public class CustomSpinnerAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.frag_search_artist_select_spinner, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.artistName = convertView.findViewById(R.id.artistName);
+            viewHolder.artistName = convertView.findViewById(R.id.artistViewButton);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();

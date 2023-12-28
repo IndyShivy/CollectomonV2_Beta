@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_color"
-    tools:context=".SearchFragment">
+    tools:context=".CollectionFragment">
 
     <View
         android:id="@+id/searchView"
@@ -19,20 +19,6 @@
         app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/artistName"-->
-<!--        android:layout_width="67dp"-->
-<!--        android:layout_height="53dp"-->
-<!--        android:layout_marginTop="56dp"-->
-<!--        android:gravity="center"-->
-<!--        android:hint="@string/select_artist"-->
-<!--        android:textColor="#000000"-->
-<!--        android:textSize="18sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.915"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     <Button
         android:id="@+id/artistViewButton"
@@ -74,12 +60,12 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.454"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-
     <EditText
-        android:id="@+id/searchCard"
+        android:id="@+id/searchEditText1"
         style="@style/EditTextStyle"
         android:textSize="18sp"
         android:layout_width="256dp"
@@ -93,10 +79,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.244"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"  />
 
     <ImageButton
-        android:id="@+id/addCardButton"
+        android:id="@+id/deleteCardButton"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:background="@drawable/circle_background"
@@ -106,8 +92,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.914"
-        app:srcCompat="@drawable/plusle" />
+        app:layout_constraintVertical_bias="0.90999997"
+        app:srcCompat="@drawable/minun" />
 
     <View
         android:id="@+id/overlay"
@@ -115,7 +101,6 @@
         android:layout_height="match_parent"
         android:background="#99000000"
         android:visibility="gone" />
-
 
     <ListView
         android:id="@+id/loadArtistList"
@@ -130,6 +115,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <TextView
         android:id="@+id/loadName"
         android:layout_width="wrap_content"
@@ -140,6 +127,8 @@
         app:layout_constraintHorizontal_bias="0.174"
         app:layout_constraintStart_toStartOf="@+id/artistView"
         app:layout_constraintTop_toTopOf="@+id/artistView" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
