@@ -22,6 +22,4 @@
         app:menu="@menu/frag_all_bottom_nav_menu_options"
         style="@style/CustomBottomNavigationView">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
-
-
 </RelativeLayout>
