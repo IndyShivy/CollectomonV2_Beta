@@ -217,6 +217,26 @@ public class CardDatabase extends SQLiteOpenHelper {
         return exists;
     }
 
+    // Get all cards from the database
+    public List<CardItem> getAllCards() {
+        List<CardItem> cards = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String artist = cursor.getString(cursor.getColumnIndexOrThrow(ARTIST_NAME));
+                String cardId = cursor.getString(cursor.getColumnIndexOrThrow(CARD_ID));
+                String imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_SRC));
+                String cardName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CARD_NAME));
+                String setDetails = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SET_DETAILS));
+                String cardDetails = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CARD_DETAILS));
 
+                CardItem cardItem = new CardItem(artist, cardId, imageUrl, cardName, setDetails, cardDetails);
+                cards.add(cardItem);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return cards;
+    }
 }
 

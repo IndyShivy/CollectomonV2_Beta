@@ -105,6 +105,9 @@ public class CollectionFragment extends Fragment {
         recyclerView = rootView.findViewById(R.id.recyclerView);
         collectionAdapter = new CollectionAdapter(new ArrayList<>(), context);
         recyclerView.setAdapter(collectionAdapter);
+        populateRecyclerView();
+        artistSelected = "All Cards";
+        loadName.setText(artistSelected);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
 
@@ -114,8 +117,10 @@ public class CollectionFragment extends Fragment {
         if (artistSet != null) {
             artistNames = new ArrayList<>(artistSet);
         }
+        // Add "All Cards" option at the beginning of the list
+        artistNames.add(0, "All Cards");
         // Sort the list of artist names
-        Collections.sort(artistNames);
+        Collections.sort(artistNames.subList(1, artistNames.size()));
 
 
         //add select artist to list
@@ -135,13 +140,21 @@ public class CollectionFragment extends Fragment {
 
         loadArtistList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedArtist = parent.getItemAtPosition(position).toString();
-            List<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
-            collectionAdapter = new CollectionAdapter(cardItems, context);
-            loadName.setText(selectedArtist);
-            loadArtistList.setVisibility(View.GONE);
-            overlay.setVisibility(View.GONE);
-            artistSelected = selectedArtist;
-            recyclerView.setAdapter(collectionAdapter);
+                    if (selectedArtist.equals("All Cards")) {
+                        artistSelected = "All Cards";
+                        loadName.setText(artistSelected);
+                        loadArtistList.setVisibility(View.GONE);
+                        overlay.setVisibility(View.GONE);
+                        populateRecyclerView();
+                    } else {
+                        List<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
+                        collectionAdapter = new CollectionAdapter(cardItems, context);
+                        loadName.setText(selectedArtist);
+                        loadArtistList.setVisibility(View.GONE);
+                        overlay.setVisibility(View.GONE);
+                        artistSelected = selectedArtist;
+                        recyclerView.setAdapter(collectionAdapter);
+                    }
         });
 
         overlay.setOnTouchListener((v, event) -> {
@@ -176,7 +189,11 @@ public class CollectionFragment extends Fragment {
             if (!searchText.isEmpty()) {
                 filterCardItems(searchText);
             } else {
-                collectionAdapter.filterList(db.getCardsByArtist(artistSelected));
+                if (artistSelected.equals("All Cards")) {
+                    collectionAdapter.filterList(db.getAllCards());
+                } else {
+                    collectionAdapter.filterList(db.getCardsByArtist(artistSelected));
+                }
             }
         }
 
@@ -184,13 +201,29 @@ public class CollectionFragment extends Fragment {
         private void filterCardItems(String searchText) {
             List<CardItem> filteredList = new ArrayList<>();
 
-            for (CardItem cardItem : db.getCardsByArtist(artistSelected)) {
+            List<CardItem> cardsToFilter;
+            if (artistSelected.equals("All Cards")) {
+                cardsToFilter = db.getAllCards();
+            } else {
+                cardsToFilter = db.getCardsByArtist(artistSelected);
+            }
+
+            for (CardItem cardItem : cardsToFilter) {
                 if (cardItem.getCardName().toLowerCase().startsWith(searchText.toLowerCase())) {
                     filteredList.add(cardItem);
                 }
             }
             collectionAdapter.filterList(filteredList);
         }
+
     };
+    // Populate the RecyclerView with the list of cards
+    public void populateRecyclerView() {
+        db = new CardDatabase(context);
+        List<CardItem> cards = db.getAllCards();
+        collectionAdapter = new CollectionAdapter(cards, context);
+        recyclerView.setAdapter(collectionAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+    }
 
 }
