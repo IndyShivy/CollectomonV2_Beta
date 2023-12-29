@@ -230,7 +230,6 @@ public class CardDatabase extends SQLiteOpenHelper {
                 String cardName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CARD_NAME));
                 String setDetails = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_SET_DETAILS));
                 String cardDetails = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CARD_DETAILS));
-
                 CardItem cardItem = new CardItem(artist, cardId, imageUrl, cardName, setDetails, cardDetails);
                 cards.add(cardItem);
             } while (cursor.moveToNext());
