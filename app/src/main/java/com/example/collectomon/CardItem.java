@@ -2,6 +2,7 @@ package com.example.collectomon;
 
 import androidx.annotation.NonNull;
 
+// Class for each card item
 public class CardItem {
     private final String artistName;
     private final String cardID;
@@ -11,6 +12,7 @@ public class CardItem {
     private final String cardDetails;
     private boolean isChecked;
 
+    // Constructor
     public CardItem(String artistName, String cardID, String imageSrc, String cardName, String setDetails, String cardDetails) {
         this.artistName = artistName;
         this.cardID = cardID;
@@ -21,6 +23,7 @@ public class CardItem {
         this.isChecked = false;
     }
 
+    // Getters and setters
     public String getImageSrc() {
         return imageSrc;
     }
@@ -49,12 +52,6 @@ public class CardItem {
         return cardID;
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-        return cardID + " " + imageSrc + " " + cardName + " " + setDetails + " " + cardDetails;
-    }
-
     public String getArtistName() {
         return artistName;
     }
@@ -66,4 +63,13 @@ public class CardItem {
     public String getImageUrl() {
         return imageSrc;
     }
+
+    // toString method
+    @NonNull
+    @Override
+    public String toString() {
+        return cardID + " " + imageSrc + " " + cardName + " " + setDetails + " " + cardDetails;
+    }
+
+
 }

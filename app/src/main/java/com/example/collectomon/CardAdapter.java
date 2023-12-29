@@ -1,11 +1,12 @@
 package com.example.collectomon;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,85 +18,70 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+// Adapter for the list of cards on the search page
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     private List<CardItem> cardItems;
     private final Context context;
-    private CardDatabase databaseHelper;
+    private CardDatabase db;
     ArrayList<CardItem> cardStuff;
 
 
+    // Constructor
     public CardAdapter(List<CardItem> cardItems, Context context) {
         this.cardItems = cardItems;
         this.context = context;
     }
 
 
+    // Filter the list of cards
     @SuppressLint("NotifyDataSetChanged")
     public void filterList(List<CardItem> filteredList) {
-        cardItems = filteredList;
-        notifyDataSetChanged();
+        ((Activity) context).runOnUiThread(() -> {
+            cardItems = filteredList;
+            notifyDataSetChanged();
+        });
     }
 
+    // Get the number of items in the list
     @Override
     public int getItemCount() {
         return cardItems.size();
     }
 
-
-
-    public List<CardItem> getSelectedCardItems() {
-        List<CardItem> selectedItems = new ArrayList<>();
-        for (CardItem cardItem : cardItems) {
-            if (cardItem.isChecked()) {
-                selectedItems.add(cardItem);
-                cardItem.setChecked(false);
-            }
-        }
-        return selectedItems;
-    }
-
-
+    // View holder for each item in the list
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView cardNameTextView;
         TextView setDetailsTextView;
         TextView cardDetailsTextView;
-        CheckBox checkbox;
+        Button addButton;
+        TextView displayAddedText;
 
+        // Constructor
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.imageView);
             cardNameTextView = itemView.findViewById(R.id.cardNameTextView);
             setDetailsTextView = itemView.findViewById(R.id.setDetailsTextView);
             cardDetailsTextView = itemView.findViewById(R.id.cardDetailsTextView);
-            checkbox = itemView.findViewById(R.id.checkbox);
-            itemView.setOnClickListener(v -> checkbox.setChecked(!checkbox.isChecked()));
+            addButton = itemView.findViewById(R.id.addButton);
+            displayAddedText = itemView.findViewById(R.id.displayAddedText);
         }
+
     }
+
+    // Create the view holder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_cardadapter_item, parent, false);
-//        databaseHelper = new CardDatabase(context);
-//        cardStuff = new ArrayList<>();
-//        return new ViewHolder(view);
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_cardadapter_item, parent, false);
-        databaseHelper = new CardDatabase(context);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_adapter_item, parent, false);
+        db = new CardDatabase(context);
         cardStuff = new ArrayList<>();
-        ViewHolder viewHolder = new ViewHolder(view);
-        viewHolder.checkbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            int position = viewHolder.getAdapterPosition();
-            CardItem cardItem = cardItems.get(position);
-            cardStuff.add(cardItem);
-            if (isChecked) {
-                // Add the card to the database
-                databaseHelper.addCards(cardStuff);
-            }
-        });
-
-        return viewHolder;
+        return new ViewHolder(view);
     }
+
+    // Bind the view holder to the card item
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (position >= cardItems.size()) {
@@ -103,10 +89,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         }
 
         CardItem cardItem = cardItems.get(position);
-        boolean isChecked = databaseHelper.isCardExists(cardItem.getCardId());
+        boolean isChecked = db.isCardExists(cardItem.getCardId());
         cardItem.setChecked(isChecked);
 
-        holder.checkbox.setChecked(cardItem.isChecked());
+        if (cardItem.isChecked()) {
+            holder.addButton.setVisibility(View.GONE);
+            holder.displayAddedText.setVisibility(View.VISIBLE);
+        } else {
+            holder.addButton.setVisibility(View.VISIBLE);
+            holder.displayAddedText.setVisibility(View.GONE);
+        }
 
         Picasso.get()
                 .load(cardItem.getImageSrc())
@@ -118,10 +110,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         holder.setDetailsTextView.setText(cardItem.getSetDetails());
         holder.cardDetailsTextView.setText(cardItem.getCardDetails());
 
-        holder.checkbox.setOnCheckedChangeListener(null);
-        holder.checkbox.setChecked(cardItem.isChecked());
+        holder.addButton.setOnClickListener(v -> {
 
-        holder.checkbox.setOnCheckedChangeListener((buttonView, isChecked1) -> cardItem.setChecked(isChecked1));
+                cardStuff.add(cardItem);
+                db.addCard(cardItem);
+
+                notifyItemInserted(cardItems.size() - 1);
+                notifyItemRangeChanged(cardItems.size() - 1, getItemCount());
+                holder.addButton.setVisibility(View.GONE);
+                holder.displayAddedText.setVisibility(View.VISIBLE);
+
+        });
     }
 }
 

@@ -25,7 +25,7 @@
         android:layout_width="80dp"
         android:layout_height="40dp"
         android:background="@drawable/frag_home_search_box"
-        android:backgroundTint="@color/frag_home_search_add_button"
+        android:backgroundTint="@color/secondary_colour_blue"
         android:contentDescription="@string/select_artist"
         android:text="@string/select_artist"
         android:textAlignment="center"
@@ -43,21 +43,21 @@
         android:layout_height="22dp"
         android:layout_centerInParent="true"
         android:layout_marginTop="38dp"
+        android:layout_marginBottom="1dp"
         android:background="@drawable/frag_search_artist_list_shape"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+        app:layout_constraintBottom_toTopOf="@+id/searchEditText1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="392dp"
         android:layout_height="580dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.454"
@@ -80,20 +80,6 @@
         app:layout_constraintHorizontal_bias="0.244"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"  />
-
-    <ImageButton
-        android:id="@+id/deleteCardButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:background="@drawable/circle_background"
-        android:contentDescription="@string/addcard"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.90999997"
-        app:srcCompat="@drawable/minun" />
 
     <View
         android:id="@+id/overlay"

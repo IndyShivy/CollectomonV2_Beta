@@ -20,20 +20,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/artistName"-->
-<!--        android:layout_width="67dp"-->
-<!--        android:layout_height="53dp"-->
-<!--        android:layout_marginTop="56dp"-->
-<!--        android:gravity="center"-->
-<!--        android:hint="@string/select_artist"-->
-<!--        android:textColor="#000000"-->
-<!--        android:textSize="18sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.915"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <Button
         android:id="@+id/artistViewButton"
         android:layout_width="80dp"
@@ -57,31 +43,29 @@
         android:layout_height="22dp"
         android:layout_centerInParent="true"
         android:layout_marginTop="38dp"
+        android:layout_marginBottom="1dp"
         android:background="@drawable/frag_search_artist_list_shape"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@+id/searchView"
+        app:layout_constraintBottom_toTopOf="@+id/searchCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.095"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="392dp"
         android:layout_height="580dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-
     <EditText
         android:id="@+id/searchCard"
         style="@style/EditTextStyle"
-        android:textSize="18sp"
         android:layout_width="256dp"
         android:layout_height="48dp"
         android:layout_marginTop="61dp"
@@ -90,24 +74,11 @@
         android:hint="@string/search_card"
         android:inputType="text"
         android:textCursorDrawable="@drawable/frag_home_search_box_cursor"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.244"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/addCardButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:background="@drawable/circle_background"
-        android:contentDescription="@string/addcard"
-        android:scaleType="centerInside"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.914"
-        app:srcCompat="@drawable/plusle" />
 
     <View
         android:id="@+id/overlay"

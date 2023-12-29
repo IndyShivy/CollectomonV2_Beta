@@ -2,6 +2,7 @@ package com.example.collectomon;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 
+//HomeFragment is the first fragment that is displayed when the app is opened
 public class HomeFragment extends Fragment{
     public List<String> artistNames;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
@@ -36,7 +38,6 @@ public class HomeFragment extends Fragment{
     Button backup, restore,addArtistButton;
     CardDatabase db;
     Context context;
-    private ListView listViewArtists;
     private ArrayAdapter<String> storedArtistNames;
     private AutoCompleteTextView addArtist;
 
@@ -48,16 +49,20 @@ public class HomeFragment extends Fragment{
             "Tetsuya Koizumi", "Tika Matsuno", "Tokiya"
     };
 
+    // Required empty public constructor
     public HomeFragment() {
 
     }
 
+    // Create a new instance of the fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+    // Inflate the layout for this fragment
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,10 +76,6 @@ public class HomeFragment extends Fragment{
         db = new CardDatabase(context);
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
         artistNames = new ArrayList<>();
-        //addArtistButton.getDrawable().setAlpha(200);
-        //deleteArtistButton.getDrawable().setAlpha(200);
-
-
         storedArtistNames = new ArrayAdapter<>(requireContext(), R.layout.frag_home_artist_list_item, artistNames);
 
         Set<String> artistSet = sharedPreferences.getStringSet(ARTIST_KEY, null);
@@ -82,12 +83,7 @@ public class HomeFragment extends Fragment{
             artistNames = new ArrayList<>(artistSet);
         }
         saveArtistList(artistNames);
-
-
-        listViewArtists = view.findViewById(R.id.listViewArtists);  // Find the ListView
-//        storedArtistNames = new ArrayAdapter<>(requireContext(), R.layout.list_item_artist, artistNames);
-//        listViewArtists.setAdapter(storedArtistNames);
-
+        ListView listViewArtists = view.findViewById(R.id.listViewArtists);
         storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
         listViewArtists.setAdapter(storedArtistNames);
         listViewArtists.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -98,20 +94,12 @@ public class HomeFragment extends Fragment{
             LayoutInflater backupInflate = getLayoutInflater();
             View dialogView = backupInflate.inflate(R.layout.frag_home_backup_restore_dialog, null);
             builder.setView(dialogView);
-
-            // Find the views in the custom layout and set their properties
             TextView title = dialogView.findViewById(R.id.dialog_title);
             title.setText("Backup");
-            //set the colour based on hex code
-            //title.setTextColor(Color.parseColor("#5A0715"));
             title.setTextColor(Color.WHITE);
-
-
-
             TextView message = dialogView.findViewById(R.id.dialog_message);
             message.setText("Do you want to backup your collection?");
             message.setTextColor(Color.WHITE);  // Set the color
-
             builder.setPositiveButton("Yes", (dialog, which) -> db.saveBackup())
                     .setNegativeButton("No", null)
                     .show();
@@ -122,16 +110,9 @@ public class HomeFragment extends Fragment{
             LayoutInflater backupInflate = getLayoutInflater();
             View dialogView = backupInflate.inflate(R.layout.frag_home_backup_restore_dialog, null);
             builder.setView(dialogView);
-
-            // Find the views in the custom layout and set their properties
             TextView title = dialogView.findViewById(R.id.dialog_title);
             title.setText("Restore");
-
-            //title.setTextColor(Color.parseColor("#343455"));
             title.setTextColor(Color.WHITE);
-
-
-
             TextView message = dialogView.findViewById(R.id.dialog_message);
             message.setText("Do you want to restore a previous backup?");
             message.setTextColor(Color.WHITE);  // Set the color
@@ -153,65 +134,49 @@ public class HomeFragment extends Fragment{
             }
         });
 
-
-        // Create the adapter and set it to the AutoCompleteTextView
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.dropdown_list, artistSuggestions);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.frag_home_search_box_dropdown_list, artistSuggestions);
         addArtist.setAdapter(adapter);
 
 
-        addArtist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        addArtist.setOnClickListener(v -> addArtist.showDropDown());
+        addArtist.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
                 addArtist.showDropDown();
-            }
-        });
-        addArtist.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    addArtist.showDropDown();
-                }
             }
         });
 
         addArtist.addTextChangedListener(new TextWatcher() {
+
+            //
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
 
+            //when text is changed, filter the list of suggestions
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Filter results and count matches
                 adapter.getFilter().filter(charSequence, count -> {
                     int maxItemsToShow = 6; // Max items to show
                     int itemsToShow = Math.min(count, maxItemsToShow);
-
-                    System.out.println("itemsToShow: " + itemsToShow);
-                    // Calculate item height dynamically or use a specific height
-                    int singleItemHeight = 155; // Define or calculate the single item height
+                    int singleItemHeight = 155;
                     int dropdownHeight = itemsToShow * singleItemHeight;
-
-                    // Set the height dynamically
                     addArtist.setDropDownHeight(dropdownHeight);
                 });
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-
             }
-
         });
-
-
         return view;
     }
 
+    //when the fragment is resumed, update the list of artists
     @Override
     public void onResume() {
         super.onResume();
     }
 
+    //add artist to the list of artists
     public void addArtistToList(String name) {
         if (!artistNames.contains(name)) {
             artistNames.add(name);
@@ -228,15 +193,16 @@ public class HomeFragment extends Fragment{
         }
     }
 
+    //save the list of artists to shared preferences
     private void saveArtistList(List<String> artistList) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        //alphabetical order
         artistList.sort(String::compareToIgnoreCase);
         Set<String> set = new HashSet<>(artistList);
         editor.putStringSet(ARTIST_KEY, set);
         editor.apply();
     }
 
+    //animation for the buttons
     private void pulseAnimation(Button button) {
         ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(
                 button,
@@ -250,10 +216,11 @@ public class HomeFragment extends Fragment{
 
     }
 
+    //hide the keyboard
     private void hideKeyboard() {
-        View view = getActivity().getCurrentFocus();
+        View view = requireActivity().getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }

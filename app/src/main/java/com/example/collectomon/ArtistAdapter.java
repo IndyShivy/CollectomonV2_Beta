@@ -8,43 +8,49 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// Adapter for the list of artists on the home page
 public class ArtistAdapter extends ArrayAdapter<String> {
     private static final String ARTIST_KEY = "artist";
-    private SharedPreferences sharedPreferences;
+    private final SharedPreferences sharedPreferences;
     List<String> artistsGlobal;
+    Button deleteButton;
+    TextView artistName;
+    String artist;
 
+    // Constructor
     public ArtistAdapter(Context context, List<String> artists, SharedPreferences sharedPreferences) {
         super(context, 0, artists);
         this.sharedPreferences = sharedPreferences;
         artistsGlobal = artists;
     }
 
+    // Get the view for each item in the list
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.frag_home_artist_list_item, parent, false);
         }
+        artistName = convertView.findViewById(R.id.artist_name);
+        deleteButton = convertView.findViewById(R.id.delete_button);
 
-        String artist = getItem(position);
-
-        TextView artistName = convertView.findViewById(R.id.artist_name);
+        artist = getItem(position);
         artistName.setText(artist);
 
-        Button deleteButton = convertView.findViewById(R.id.delete_button);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                remove(artist);
-                saveArtistList(artistsGlobal);
-                notifyDataSetChanged();
-            }
+        deleteButton.setOnClickListener(v -> {
+            remove(artist);
+            saveArtistList(artistsGlobal);
+            notifyDataSetChanged();
         });
         return convertView;
     }
+    // Save the list of artists to shared preferences
     private void saveArtistList(List<String> artistList) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Set<String> set = new HashSet<>(artistList);
