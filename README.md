@@ -16,7 +16,7 @@ Welcome to Collectomon, the innovative app for Android users designed to manage,
 
 Experience Collectomon in action! Here's a sneak peek at what you can expect:
 
-![Home Screen](link-to-home-screen-screenshot)
+![Home Screen](./images/home.png)
 *Home Screen - Add artists and manage your collection.*
 
 ![Search Screen](link-to-search-screen-screenshot)
