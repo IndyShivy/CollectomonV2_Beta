@@ -235,7 +235,7 @@ public class CardDatabase extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-
+        db.close();
         //sort the cards by card name
         cards.sort((o1, o2) -> o1.getCardName().compareToIgnoreCase(o2.getCardName()));
         return cards;

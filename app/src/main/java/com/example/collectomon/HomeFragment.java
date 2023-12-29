@@ -30,7 +30,7 @@ import java.util.Set;
 
 
 //HomeFragment is the first fragment that is displayed when the app is opened
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
     public List<String> artistNames;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";

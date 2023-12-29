@@ -44,7 +44,7 @@ public class ArtistAdapter extends ArrayAdapter<String> {
         artistName.setText(artist);
 
         deleteButton.setOnClickListener(v -> {
-            remove(artist);
+            remove(getItem(position));
             saveArtistList(artistsGlobal);
             notifyDataSetChanged();
         });
