@@ -15,12 +15,18 @@ Welcome to Collectomon, the innovative app for Android users designed to manage,
 ## Screenshots
 
 Experience Collectomon in action! Here's a sneak peek at what you can expect:
+<div>
+  <img src="images/home.png" alt="Home Screen" width="300" height="600"/>
+  <img src="images/home_artist_dropdown.png" alt="Home Dropdown" width="300" height="600"/>
+  *Home Screen - Add artists and manage your collection.*
+</div
 
-![Home Screen](images/home.png)
-*Home Screen - Add artists and manage your collection.*
 
-![Search Screen](link-to-search-screen-screenshot)
-*Search Screen - Discover and add new cards to your collection.*
+<div>
+  <img src="images/search_artist1.png" alt="Search Artist 1" width="300" height="600"/>
+  <img src="images/search_artist2.png" alt="Search Artist 2" width="300" height="600"/>
+  *Search Screen - Discover and add new cards to your collection.*
+</div
 
 ![Collection Screen](link-to-collection-screen-screenshot)
 *Collection Screen - View and manage your collected cards.*
