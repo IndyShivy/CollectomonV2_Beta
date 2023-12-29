@@ -59,7 +59,7 @@ Experience Collectomon in action! Here's a sneak peek at what you can expect:
 
 Encounter an issue or have a suggestion? We value your feedback:
 
-- **Contact Us - FAQs and Troubleshooting **: [chibixryuu@gmail.com]
+- **Contact Us - FAQs and Troubleshooting**: [chibixryuu@gmail.com]
 
 
 ## Updates
