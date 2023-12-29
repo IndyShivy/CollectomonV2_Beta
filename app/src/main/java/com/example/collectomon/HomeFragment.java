@@ -30,7 +30,7 @@ import java.util.Set;
 
 
 //HomeFragment is the first fragment that is displayed when the app is opened
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
     public List<String> artistNames;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";
@@ -42,11 +42,15 @@ public class HomeFragment extends Fragment{
     private AutoCompleteTextView addArtist;
 
     //stored list of artist names
+
     String[] artistSuggestions = {
-            "Akira Komayama", "Atsuko Nishida", "Chibi", "Hasuno","Hataya",
-            "Hyogonosuke", "Kawayoo", "Kiyotaka Oshiyama", "Kurumitsu", "Kyokou Umemato",
-            "Mahou", "Mina Nakai", "Ooyama", "Saya Tsuruta", "Shibuzoh.", "Sowsow", "Sui",
-            "Tetsuya Koizumi", "Tika Matsuno", "Tokiya"
+            "0313","Akira Komayama", "Amelicart", "Asako Ito", "Atsuko Nishida", "Chibi",
+            "Eske Yoshinob", "Hasuno", "Hataya", "Hyogonosuke", "Kawayoo", "Kiyotaka Oshiyama",
+            "Kodama", "Kurumitsu", "Kyoko Umemato", "Lee Hyunjung", "Mahou",
+            "Megumi Mizutani", "Miki Kudo", "Miki Tanaka", "Mina Nakai", "Misa Tsutsui",
+            "Mitsuhiro Arita", "Mizue", "Naoyo Kimura", "Okacheke", "Ooyama", "Oswaldo Kato",
+            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh", "Sowsow", "Sui",
+            "Tetsuya Koizumi", "Tika Matsuno", "Tokiya", "You Iribi", "Yuka Morii"
     };
 
     // Required empty public constructor

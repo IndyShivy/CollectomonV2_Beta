@@ -1,5 +1,7 @@
 package com.example.collectomon;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -193,7 +195,7 @@ public class SearchFragment extends Fragment {
         loadArtistList.setAdapter(listViewAdapter);
 
         viewArtistList.setOnClickListener(v -> {
-
+            pulseAnimation(viewArtistList);
             if(loadArtistList.getVisibility() == View.GONE) {
                 loadArtistList.setVisibility(View.VISIBLE);
                 overlay.setVisibility(View.VISIBLE);
@@ -292,6 +294,19 @@ public class SearchFragment extends Fragment {
         });
 
         webScrapingThread.start();
+    }
+    //animation for the buttons
+    private void pulseAnimation(Button button) {
+        ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(
+                button,
+                PropertyValuesHolder.ofFloat("scaleX", 1.1f),
+                PropertyValuesHolder.ofFloat("scaleY", 1.1f)
+        );
+        scaleDown.setDuration(500);
+        scaleDown.setRepeatCount(ObjectAnimator.RESTART);
+        scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
+        scaleDown.start();
+
     }
 }
 
