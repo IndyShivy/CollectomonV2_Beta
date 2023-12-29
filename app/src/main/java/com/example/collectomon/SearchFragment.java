@@ -1,7 +1,5 @@
 package com.example.collectomon;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,12 +11,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -40,22 +38,45 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+// SearchFragment is the second fragment that is displayed when the app is opened
 public class SearchFragment extends Fragment {
 
     ActionBarDrawerToggle drawerToggle;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";
-    TextView viewArtistList;
-    CustomSpinnerAdapter spinnerAdapter;
+
+    String artistSelected;
+    TextView loadName;
     Context context;
     EditText searchEditText;
-    ImageButton addCards;
+    ListView loadArtistList;
+    Button viewArtistList;
+    View overlay,artistView;
     private CardAdapter cardAdapter;
     private List<CardItem> cardItems;
-    private CardDatabase db;
     private AppCompatActivity activity;
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
+    // Create a new instance of the fragment
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        if (!hidden) {
+            if (loadArtistList.getVisibility() == View.VISIBLE) {
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
+            }
+            if (artistSelected != null) {
+                webScrape(artistSelected);
+            }
+        }
+    }
+
+    // TextWatcher for the search bar
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -65,6 +86,7 @@ public class SearchFragment extends Fragment {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
         }
 
+        // Filter the list of cards based on the search text
         @Override
         public void afterTextChanged(Editable s) {
             String searchText = s.toString().toLowerCase().trim();
@@ -75,8 +97,20 @@ public class SearchFragment extends Fragment {
                 cardAdapter.filterList(cardItems);
             }
         }
+        // Filter the list of cards based on the search text
+        private void filterCardItems(String searchText) {
+            List<CardItem> filteredList = new ArrayList<>();
+
+            for (CardItem cardItem : cardItems) {
+                if (cardItem.getCardName().toLowerCase().startsWith(searchText.toLowerCase())) {
+                    filteredList.add(cardItem);
+                }
+            }
+            cardAdapter.filterList(filteredList);
+        }
     };
 
+    // Set up the drawer toggle
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item)) {
@@ -85,6 +119,7 @@ public class SearchFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    // Set up the drawer toggle
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -93,52 +128,60 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    // Set up the drawer toggle
     @Override
     public void onDetach() {
         super.onDetach();
         activity = null;
     }
 
+    // Set up the drawer toggle
     @Override
     public void onResume() {
         super.onResume();
 
-        // Set up the onBackPressed callback
+        if (loadArtistList.getVisibility() == View.VISIBLE) {
+            loadArtistList.setVisibility(View.GONE);
+            overlay.setVisibility(View.GONE);
+        }
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // Replace the current fragment with HomeFragment
-                getFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new HomeFragment()).commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.fragmentContainer, new HomeFragment()).commit();
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    // OnCreateView for the fragment
+    @SuppressLint({"NotifyDataSetChanged", "ClickableViewAccessibility"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.frag_search, container, false);
         context = requireContext();
-        db = new CardDatabase(context);
+        viewArtistList = rootView.findViewById(R.id.artistViewButton);
+        loadArtistList = rootView.findViewById(R.id.loadArtistList);
+        artistView = rootView.findViewById(R.id.artistView);
+        loadName = rootView.findViewById(R.id.loadName);
+        overlay = rootView.findViewById(R.id.overlay);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        overlay.setLayoutParams(params);
 
-        addCards = rootView.findViewById(R.id.addCardButton);
+
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
         List<String> artistNames = new ArrayList<>();
         Set<String> artistSet = sharedPreferences.getStringSet(ARTIST_KEY, null);
         if (artistSet != null) {
             artistNames = new ArrayList<>(artistSet);
         }
-        // Sort the list of artist names
         Collections.sort(artistNames);
 
 
-        viewArtistList = rootView.findViewById(R.id.viewArtistList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, artistNames);
-        spinnerAdapter = new CustomSpinnerAdapter(context, artistNames);
-        viewArtistList.setAdapter(spinnerAdapter);
-
         searchEditText = rootView.findViewById(R.id.searchCard);
         searchEditText.addTextChangedListener(textWatcher);
+
         RecyclerView recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         cardItems = new ArrayList<>();
@@ -146,59 +189,44 @@ public class SearchFragment extends Fragment {
         recyclerView.setAdapter(cardAdapter);
 
 
-        viewArtistList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                webScrape(viewArtistList.getSelectedItem().toString());
-                if (!searchEditText.getText().toString().equals("")) {
-                    searchEditText.setText("");
-                }
-            }
+        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>(context,R.layout.frag_search_artist_dropdown, artistNames);
+        loadArtistList.setAdapter(listViewAdapter);
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+        viewArtistList.setOnClickListener(v -> {
 
-            }
-        });
-        viewArtistList.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    // Get the height of a single item in the dropdown list
-                    int itemHeight = 48;
-                    // Calculate the total height for the number of items you want to
-                    // display at a time
-                    int totalHeight = itemHeight * 5; // Change this to the number of items you want to display at a time
-                    // Set the dropdown height
-                    viewArtistList.setDropDownVerticalOffset(totalHeight);
-                }
-                return false;
+            if(loadArtistList.getVisibility() == View.GONE) {
+                loadArtistList.setVisibility(View.VISIBLE);
+                overlay.setVisibility(View.VISIBLE);
+            } else {
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
             }
         });
+        loadArtistList.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedArtist = (String) parent.getItemAtPosition(position);
+            artistSelected = selectedArtist;
+            loadName.setText(selectedArtist);
+            loadArtistList.setVisibility(View.GONE);
+            overlay.setVisibility(View.GONE);
+            webScrape(selectedArtist);
+        });
 
-        addCards.setOnClickListener(v -> {
-            List<CardItem> selectedCardItems = cardAdapter.getSelectedCardItems();
-            cardAdapter.notifyDataSetChanged();
-            db.addCards(selectedCardItems);
-            Toast.makeText(context, "Cards have been added!", Toast.LENGTH_SHORT).show();
-            pulseAnimation();
+
+        overlay.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (loadArtistList.getVisibility() == View.VISIBLE) {
+                    loadArtistList.setVisibility(View.GONE);
+                    overlay.setVisibility(View.GONE);
+                }
+            }
+            return true;
         });
 
         return rootView;
     }
 
-    private void filterCardItems(String searchText) {
-        List<CardItem> filteredList = new ArrayList<>();
 
-        for (CardItem cardItem : cardItems) {
-            if (cardItem.getCardName().toLowerCase().startsWith(searchText.toLowerCase())) {
-                filteredList.add(cardItem);
-            }
-        }
-        cardAdapter.filterList(filteredList);
-    }
-
+// Web scrape the data from the website
     public void webScrape(String name) {
         cardItems.clear();
         String stringWithoutGaps = name.replaceAll("\\s+", "");
@@ -265,19 +293,5 @@ public class SearchFragment extends Fragment {
 
         webScrapingThread.start();
     }
-
-    private void pulseAnimation() {
-        ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(
-                addCards,
-                PropertyValuesHolder.ofFloat("scaleX", 1.1f),
-                PropertyValuesHolder.ofFloat("scaleY", 1.1f)
-        );
-        scaleDown.setDuration(500);
-        scaleDown.setRepeatCount(ObjectAnimator.RESTART);
-        scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
-        scaleDown.start();
-    }
-
-
 }
 

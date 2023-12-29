@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Database for storing cards
 public class CardDatabase extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "card_database";
     public static final int DATABASE_VERSION = 1;
@@ -27,12 +28,13 @@ public class CardDatabase extends SQLiteOpenHelper {
     Context context;
     String dbPath;
 
+    // Constructor
     public CardDatabase(Context context) {
-
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
+    // Create the database
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTableQuery = "CREATE TABLE " + TABLE_NAME + " (" +
@@ -47,15 +49,12 @@ public class CardDatabase extends SQLiteOpenHelper {
 
     }
 
+    // Upgrade the database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
     }
 
-
-//save and restore backup
-
-
+    //save the database
     public void saveBackup() {
         String backupFileName = "CollectomonDatabase.db";
         File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
@@ -84,6 +83,7 @@ public class CardDatabase extends SQLiteOpenHelper {
         }
     }
 
+    //restore the database
     public void restoreBackup() {
         String backupFileName = "CollectomonDatabase.db";
         File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
@@ -114,6 +114,7 @@ public class CardDatabase extends SQLiteOpenHelper {
         }
     }
 
+    // Get all cards by artist
     public List<CardItem> getCardsByArtist(String artistName) {
         List<CardItem> cardList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
@@ -140,7 +141,6 @@ public class CardDatabase extends SQLiteOpenHelper {
                 null
         );
 
-
         if (cursor.moveToFirst()) {
             do {
                 String artist = cursor.getString(cursor.getColumnIndexOrThrow(ARTIST_NAME));
@@ -157,45 +157,37 @@ public class CardDatabase extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
-
         return cardList;
     }
 
-
-    public void addCards(List<CardItem> cards) {
+    // Add a card to the database
+    public void addCard(CardItem card) {
         SQLiteDatabase db = getWritableDatabase();
 
-        for (CardItem card : cards) {
-            if (!isCardIdExists(db, card.getCardId())) {
-                ContentValues values = new ContentValues();
-                values.put(ARTIST_NAME, card.getArtistName());
-                values.put(CARD_ID, card.getCardId());
-                values.put(COLUMN_IMAGE_SRC, card.getImageUrl());
-                values.put(COLUMN_CARD_NAME, card.getCardName());
-                values.put(COLUMN_SET_DETAILS, card.getSetDetails());
-                values.put(COLUMN_CARD_DETAILS, card.getCardDetails());
-                db.insert(TABLE_NAME, null, values);
-            }
+        if (!isCardIdExists(db, card.getCardId())) {
+            ContentValues values = new ContentValues();
+            values.put(ARTIST_NAME, card.getArtistName());
+            values.put(CARD_ID, card.getCardId());
+            values.put(COLUMN_IMAGE_SRC, card.getImageUrl());
+            values.put(COLUMN_CARD_NAME, card.getCardName());
+            values.put(COLUMN_SET_DETAILS, card.getSetDetails());
+            values.put(COLUMN_CARD_DETAILS, card.getCardDetails());
+            db.insert(TABLE_NAME, null, values);
         }
-
         db.close();
     }
 
-    public void deleteCards(List<CardItem> cards) {
+    // Delete a card from the database
+    public void deleteCard(CardItem card) {
         SQLiteDatabase db = getWritableDatabase();
-
-        for (CardItem card : cards) {
-            String cardId = card.getCardId();
-
-            if (isCardIdExists(db, cardId)) {
-                db.delete(TABLE_NAME, CARD_ID + " = ?", new String[]{cardId});
-            }
+        String cardId = card.getCardId();
+        if (isCardIdExists(db, cardId)) {
+            db.delete(TABLE_NAME, CARD_ID + " = ?", new String[]{cardId});
         }
-
         db.close();
     }
 
-
+    // Check if a card exists in the database
     private boolean isCardIdExists(SQLiteDatabase db, String cardId) {
         String[] columns = {CARD_ID};
         String selection = CARD_ID + " = ?";
@@ -207,23 +199,21 @@ public class CardDatabase extends SQLiteOpenHelper {
         if (cursor != null) {
             cursor.close();
         }
-
         return exists;
     }
 
+    // Check if a card exists in the database
     public boolean isCardExists(String cardId) {
         SQLiteDatabase db = getReadableDatabase();
         String[] columns = {CARD_ID};
         String selection = CARD_ID + " = ?";
         String[] selectionArgs = {cardId};
         String limit = "1";
-
         Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null, limit);
         boolean exists = (cursor != null && cursor.getCount() > 0);
         assert cursor != null;
         cursor.close();
         db.close();
-
         return exists;
     }
 

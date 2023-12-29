@@ -9,14 +9,13 @@
         android:id="@+id/imageView"
         android:layout_width="142dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="10dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/cardimage" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="140dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:orientation="vertical"
         android:padding="8dp">
 
@@ -25,31 +24,50 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/white"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/setDetailsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
             android:id="@+id/cardDetailsTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/checkbox"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/custom_checkbox_background"
-        android:buttonTint="@drawable/checkbox_selector_collect"
-        android:theme="@style/checkBoxStyleCollect" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/addButton"
+            android:layout_width="86dp"
+            android:layout_height="50dp"
+            android:text="@string/add"
+            android:background="@drawable/frag_coll_sear_button"
+            android:backgroundTint="@color/primary_colour_red"
+            android:textColor="#FFFFFF"/>
+
+        <TextView
+            android:id="@+id/displayAddedText"
+            android:layout_width="86dp"
+            android:layout_height="50dp"
+            android:background="@drawable/frag_search_dotted_border"
+            android:text="@string/added"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:visibility="gone"/>
+
+
+    </LinearLayout>
 
 </LinearLayout>

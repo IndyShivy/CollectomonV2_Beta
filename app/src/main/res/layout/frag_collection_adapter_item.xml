@@ -9,14 +9,13 @@
         android:id="@+id/imageView"
         android:layout_width="142dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="10dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/cardimage" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="140dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:orientation="vertical"
         android:padding="8dp">
 
@@ -24,8 +23,8 @@
             android:id="@+id/cardNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
         <TextView
@@ -44,14 +43,23 @@
 
     </LinearLayout>
 
-    <CheckBox
-        android:id="@+id/checkbox"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/custom_checkbox_background"
-        android:buttonTint="@drawable/checkbox_selector"
-        android:theme="@style/checkBoxStyle" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+
+        <Button
+            android:id="@+id/removeButton"
+            android:layout_width="86dp"
+            android:layout_height="50dp"
+            android:background="@drawable/frag_coll_sear_button"
+            android:backgroundTint="@color/secondary_colour_blue"
+            android:text="@string/remove"
+            android:textColor="#FFFFFF"
+            />
+
+    </LinearLayout>
+
 </LinearLayout>

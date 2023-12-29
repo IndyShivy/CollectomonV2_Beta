@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/artistViewButton"
+    android:layout_width="300dp"
+    android:layout_height="64dp"
+    android:gravity="center"
+    android:textColor="@color/white"
+    android:textSize="16sp"
+    android:padding="8dp"
+    android:background="@drawable/frag_search_artist_display" />
