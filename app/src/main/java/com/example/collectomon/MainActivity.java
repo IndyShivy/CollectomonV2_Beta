@@ -142,8 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
         HomeFragment homeFragment = new HomeFragment();
 
-
-
         fragmentManager.beginTransaction()
                 .add(R.id.fragmentContainer, homeFragment)
                 .commit();
