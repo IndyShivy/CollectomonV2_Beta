@@ -2,14 +2,14 @@
 
 ## Introduction
 
-Welcome to Collectomon, the innovative app for Android users designed to manage, collect, and explore Pokémon cards by artists! Whether you're an avid collector or just starting, Collectomon offers an easy-to-use interface to catalog your cards, discover new ones, and keep track of your growing collection. Dive into a meticulously organized world where every Pokémon card is at your fingertips!
+Welcome to Collectomon, the innovative app for Android users designed to manage, collect, and explore Pokémon cards by artists! Whether you're an avid collector or just starting, Collectomon offers an easy-to-use interface to catalog your cards, discover new ones, and keep track of your growing collection. Dive into a meticulously organised world where every Pokémon card is at your fingertips!
 
 ## Features
 
 - **Artist-Driven Collection**: Easily add artists from a dropdown menu or manually to start collecting cards associated with them.
-- **Comprehensive Search**: Look up cards by artist, or directly through the search bar, complete with card images, names, and numbers.
+- **Comprehensive Search**: Look up cards by artist, and find a card directly through the search bar, complete with card images, names, and numbers.
 - **Personal Collection Management**: Add cards to your collection with a simple tap and view your collected cards sorted by artist or see all cards in your database.
-- **Backup and Restore**: Secure your collection with backup options and restore them anytime to any device.
+- **Backup and Restore**: Secure your collection with backup options and restore them if you made a mistake.
 - **Interactive Card Display**: View detailed information about each card and manage your collection with ease.
 
 ## Screenshots
