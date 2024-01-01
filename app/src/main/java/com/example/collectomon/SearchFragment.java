@@ -13,12 +13,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -28,6 +30,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -46,6 +49,8 @@ public class SearchFragment extends Fragment {
     ActionBarDrawerToggle drawerToggle;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";
+    String nonSelected = "No artist selected";
+
 
     String artistSelected;
     TextView loadName;
@@ -194,8 +199,13 @@ public class SearchFragment extends Fragment {
         ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>(context,R.layout.frag_search_artist_dropdown, artistNames);
         loadArtistList.setAdapter(listViewAdapter);
 
+        // Set the name to none selected at the start
+        loadName.setText(nonSelected);
+
         viewArtistList.setOnClickListener(v -> {
             pulseAnimation(viewArtistList);
+            searchEditText.setText("");
+            closeKeyboard();
             if(loadArtistList.getVisibility() == View.GONE) {
                 loadArtistList.setVisibility(View.VISIBLE);
                 overlay.setVisibility(View.VISIBLE);
@@ -208,9 +218,15 @@ public class SearchFragment extends Fragment {
             String selectedArtist = (String) parent.getItemAtPosition(position);
             artistSelected = selectedArtist;
             loadName.setText(selectedArtist);
+            searchEditText.setHint(R.string.search_card);
             loadArtistList.setVisibility(View.GONE);
             overlay.setVisibility(View.GONE);
+            //send a toast message to the user
+            Toast.makeText(context, "Searching...", Toast.LENGTH_SHORT).show();
+
+            //if no cards are found, send a toast message to the user
             webScrape(selectedArtist);
+            closeKeyboard();
         });
 
 
@@ -224,6 +240,18 @@ public class SearchFragment extends Fragment {
             return true;
         });
 
+        // Close the keyboard when the user touches the screen
+        rootView.setOnTouchListener((v, event) -> {
+            closeKeyboard();
+            return false;
+        });
+
+        // Close the keyboard when the user touches the screen
+        recyclerView.setOnTouchListener((v, event) -> {
+            closeKeyboard();
+            return false;
+        });
+
         return rootView;
     }
 
@@ -234,7 +262,7 @@ public class SearchFragment extends Fragment {
         String stringWithoutGaps = name.replaceAll("\\s+", "");
         String modifiedName = stringWithoutGaps.toLowerCase();
         String theLink = "https://www.serebii.net/card/dex/artist/" + modifiedName + ".shtml";
-
+        ArrayList<CardItem> cards = new ArrayList<>();
         System.out.println(theLink);
         @SuppressLint("NotifyDataSetChanged") Thread webScrapingThread = new Thread(() -> {
             try {
@@ -242,11 +270,11 @@ public class SearchFragment extends Fragment {
                 Element tableElement = doc.select("table.dextable").first();
                 assert tableElement != null;
                 Elements rowElements = tableElement.select("tr");
-                ArrayList<CardItem> cards = new ArrayList<>();
-
+                cards.clear();
                 cardItems.clear();
 
                 for (int i = 1; i < rowElements.size(); i++) {
+
                     Element row = rowElements.get(i);
                     Elements columnElements = row.select("td");
 
@@ -284,13 +312,20 @@ public class SearchFragment extends Fragment {
                     }
                 }
 
+
                 if (activity != null) {
                     activity.runOnUiThread(() -> cardAdapter.notifyDataSetChanged());
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
+                if (e instanceof HttpStatusException) {
+                    if (activity != null) {
+                        activity.runOnUiThread(() -> Toast.makeText(context, "No cards found, check artist name", Toast.LENGTH_SHORT).show());
+                    }
+                }
             }
+
         });
 
         webScrapingThread.start();
@@ -307,6 +342,13 @@ public class SearchFragment extends Fragment {
         scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
         scaleDown.start();
 
+    }
+    private void closeKeyboard() {
+        View view = requireActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }
 

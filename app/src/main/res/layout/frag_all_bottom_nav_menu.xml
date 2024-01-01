@@ -13,13 +13,13 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigationView"
+        style="@style/CustomBottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="86dp"
         android:layout_alignParentBottom="true"
         android:background="@color/bottom_bar"
         app:itemIconTint="@color/frag_all_bottom_nav_colouring"
         app:itemTextColor="@color/frag_all_bottom_nav_colouring"
-        app:menu="@menu/frag_all_bottom_nav_menu_options"
-        style="@style/CustomBottomNavigationView">
+        app:menu="@menu/frag_all_bottom_nav_menu_options">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -132,6 +133,7 @@ public class CollectionFragment extends Fragment {
 
         viewArtistList.setOnClickListener(v -> {
             pulseAnimation(viewArtistList);
+            closeKeyboard();
             if (loadArtistList.getVisibility() == View.GONE) {
                 loadArtistList.setVisibility(View.VISIBLE);
                 overlay.setVisibility(View.VISIBLE);
@@ -168,6 +170,17 @@ public class CollectionFragment extends Fragment {
                 }
             }
             return true;
+        });
+
+        // Close the keyboard when the user touches the screen
+        rootView.setOnTouchListener((v, event) -> {
+            closeKeyboard();
+            return false;
+        });
+        // Close the keyboard when the user touches the screen
+        recyclerView.setOnTouchListener((v, event) -> {
+            closeKeyboard();
+            return false;
         });
         return rootView;
     }
@@ -240,6 +253,13 @@ public class CollectionFragment extends Fragment {
         scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
         scaleDown.start();
 
+    }
+    private void closeKeyboard() {
+        View view = requireActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
 }

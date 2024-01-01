@@ -62,7 +62,7 @@
         android:ems="10"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:hint="@string/add_artist_name_here_exact"
+        android:hint="@string/click_select_add_artist"
         android:inputType="text"
         android:popupBackground="@drawable/frag_home_search_box_dropdown"
         android:textColor="#000000"
@@ -82,7 +82,7 @@
         android:backgroundTint="@color/frag_home_search_add_button"
         android:contentDescription="@string/addartist"
         android:scaleType="fitCenter"
-        android:text="Add"
+        android:text="@string/add"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="12sp"
@@ -108,7 +108,8 @@
             android:backgroundTint="@color/frag_home_search_add_button"
             android:padding="0dp"
             android:text="@string/backup"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            style="?android:attr/buttonBarButtonStyle" />
 
         <Button
             android:id="@+id/restoreButton"
@@ -118,7 +119,8 @@
             android:background="@drawable/frag_home_restore_button"
             android:padding="0dp"
             android:text="@string/restore"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            style="?android:attr/buttonBarButtonStyle" />
 
     </LinearLayout>
 

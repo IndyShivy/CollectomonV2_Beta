@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
     }
 
     // Inflate the layout for this fragment
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -171,6 +171,19 @@ public class HomeFragment extends Fragment {
             public void afterTextChanged(Editable s) {
             }
         });
+
+        // Close the keyboard when the user touches the screen
+        // Close the keyboard when the user touches the screen
+        view.setOnTouchListener((v, event) -> {
+            closeKeyboard();
+            return false;
+        });
+
+        listViewArtists.setOnTouchListener((v, event) -> {
+            closeKeyboard();
+            return false;
+        });
+
         return view;
     }
 
@@ -188,12 +201,12 @@ public class HomeFragment extends Fragment {
             addArtist.setText("");
 
             saveArtistList(artistNames);
-            hideKeyboard();
+            closeKeyboard();
 
         } else {
             Toast.makeText(context, "Artist " + name + " is already in the list.", Toast.LENGTH_SHORT).show();
             addArtist.setText("");
-            hideKeyboard();
+            closeKeyboard();
         }
     }
 
@@ -220,8 +233,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    //hide the keyboard
-    private void hideKeyboard() {
+    private void closeKeyboard() {
         View view = requireActivity().getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

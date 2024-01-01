@@ -4,13 +4,13 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="card_name">Card_Name</string>
     <string name="deletecard">DeleteCard</string>
-    <string name="search_card">Search card</string>
+    <string name="search_card">Search card name</string>
     <string name="cardimage">CardImage</string>
     <string name="addcard">AddCard</string>
     <string name="addartist">AddArtist</string>
     <string name="restore">Restore</string>
     <string name="applogo">AppLogo</string>
-    <string name="add_artist_name_here_exact">Add artist name here (exact)</string>
+    <string name="click_select_add_artist">Select/Type artist name</string>
     <string name="backup">Backup</string>
     <string name="deleteartist">DeleteArtist</string>
     <string name="select_artist">Select artist</string>
@@ -18,4 +18,8 @@
     <string name="added">Added</string>
     <string name="remove">Remove</string>
     <string name="all_cards">All Cards</string>
+    <string name="no_artist_selected">No artist selected</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="collection">Collection</string>
 </resources>

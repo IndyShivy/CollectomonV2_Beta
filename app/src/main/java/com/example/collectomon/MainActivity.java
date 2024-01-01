@@ -136,6 +136,17 @@ public class MainActivity extends AppCompatActivity {
             getWindow().setNavigationBarColor(getColor(R.color.bottom_bar));
         }
 
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            final WindowInsetsController insetsController = getWindow().getInsetsController();
+//            if (insetsController != null) {
+//                insetsController.hide(WindowInsets.Type.statusBars());
+//            }
+//        } else {
+//            getWindow().setFlags(
+//                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+//                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+//            );
+//        }
         bottomNavigationView = findViewById(R.id.navigationView);
         bottomNavigationView.setOnItemSelectedListener(navItemSelectedListener);
         FragmentManager fragmentManager = getSupportFragmentManager();
