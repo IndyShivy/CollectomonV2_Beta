@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.widget.Toast;
 
 import java.io.File;
@@ -55,9 +56,69 @@ public class CardDatabase extends SQLiteOpenHelper {
     }
 
     //save the database
+//    public void saveBackup() {
+//        String backupFileName = "CollectomonDatabase.db";
+//        File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
+//
+//        try {
+//            SQLiteDatabase db = getWritableDatabase();
+//
+//            File dbFile = new File(db.getPath());
+//            FileInputStream fis = new FileInputStream(dbFile);
+//            FileOutputStream fos = new FileOutputStream(backupFile);
+//
+//            byte[] buffer = new byte[1024];
+//            int length;
+//            while ((length = fis.read(buffer)) > 0) {
+//                fos.write(buffer, 0, length);
+//            }
+//
+//            fos.flush();
+//            fos.close();
+//            fis.close();
+//
+//            Toast.makeText(context,"Database backup created successfully",Toast.LENGTH_SHORT).show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context,"Failed to create backup",Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+    //restore the database
+//    public void restoreBackup() {
+//        String backupFileName = "CollectomonDatabase.db";
+//        File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
+//
+//        try {
+//            SQLiteDatabase db = getWritableDatabase();
+//
+//            // Clear the existing table
+//            db.execSQL("DELETE FROM " + TABLE_NAME);
+//
+//            FileInputStream fis = new FileInputStream(backupFile);
+//            FileOutputStream fos = new FileOutputStream(db.getPath());
+//
+//            byte[] buffer = new byte[1024];
+//            int length;
+//            while ((length = fis.read(buffer)) > 0) {
+//                fos.write(buffer, 0, length);
+//            }
+//
+//            fos.flush();
+//            fos.close();
+//            fis.close();
+//
+//            Toast.makeText(context,"Database backup restored successfully",Toast.LENGTH_SHORT).show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context,"Failed to restore database backup, missing backup",Toast.LENGTH_SHORT).show();
+//        }
+//    }
+
+    // Save the database to the Downloads directory
     public void saveBackup() {
         String backupFileName = "CollectomonDatabase.db";
-        File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
+        File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
 
         try {
             SQLiteDatabase db = getWritableDatabase();
@@ -76,17 +137,17 @@ public class CardDatabase extends SQLiteOpenHelper {
             fos.close();
             fis.close();
 
-            Toast.makeText(context,"Database backup created successfully",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"Backup 'CollectomonDatabase' created in 'Downloads'",Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(context,"Failed to create backup",Toast.LENGTH_SHORT).show();
         }
     }
 
-    //restore the database
+    // Restore the database from the Downloads directory
     public void restoreBackup() {
         String backupFileName = "CollectomonDatabase.db";
-        File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
+        File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
 
         try {
             SQLiteDatabase db = getWritableDatabase();
@@ -110,7 +171,7 @@ public class CardDatabase extends SQLiteOpenHelper {
             Toast.makeText(context,"Database backup restored successfully",Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(context,"Failed to restore database backup, missing backup",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"Missing backup 'CollectomonDatabase' in downloads folder",Toast.LENGTH_SHORT).show();
         }
     }
 
