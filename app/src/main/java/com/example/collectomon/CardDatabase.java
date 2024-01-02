@@ -5,10 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
-import android.widget.Toast;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,8 +51,7 @@ public class CardDatabase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
-
-    //save the database
+    //save the database (storage)
 //    public void saveBackup() {
 //        String backupFileName = "CollectomonDatabase.db";
 //        File backupFile = new File(context.getExternalFilesDir(null), backupFileName);
@@ -114,68 +110,112 @@ public class CardDatabase extends SQLiteOpenHelper {
 //            Toast.makeText(context,"Failed to restore database backup, missing backup",Toast.LENGTH_SHORT).show();
 //        }
 //    }
+    //    // Save the database to the Downloads directory
+//    public void saveBackup() {
+//        String backupFileName = "CollectomonDatabase.db";
+//        File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
+//
+//        try {
+//            SQLiteDatabase db = getWritableDatabase();
+//
+//            File dbFile = new File(db.getPath());
+//            FileInputStream fis = new FileInputStream(dbFile);
+//            FileOutputStream fos = new FileOutputStream(backupFile);
+//
+//            byte[] buffer = new byte[1024];
+//            int length;
+//            while ((length = fis.read(buffer)) > 0) {
+//                fos.write(buffer, 0, length);
+//            }
+//
+//            fos.flush();
+//            fos.close();
+//            fis.close();
+//
+//            Toast.makeText(context,"Backup 'CollectomonDatabase' created in 'Downloads'",Toast.LENGTH_SHORT).show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context,"Failed to create backup",Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    // Restore the database from the Downloads directory
+//    public void restoreBackup() {
+//        String backupFileName = "CollectomonDatabase.db";
+//        File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
+//
+//        if (backupFile.exists()) {
+//            SQLiteDatabase db = getWritableDatabase();
+//            db.close();
+//            try {
+//                // Reopen the database in write mode
+//                db = SQLiteDatabase.openDatabase(db.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+//
+//                // Clear the existing table
+//                db.execSQL("DELETE FROM " + TABLE_NAME);
+//
+//                FileInputStream fis = new FileInputStream(backupFile);
+//                FileOutputStream fos = new FileOutputStream(db.getPath());
+//
+//                byte[] buffer = new byte[1024];
+//                int length;
+//                while ((length = fis.read(buffer)) > 0) {
+//                    fos.write(buffer, 0, length);
+//                }
+//
+//                fos.flush();
+//                fos.close();
+//                fis.close();
+//
+//                Toast.makeText(context,"Database backup restored successfully",Toast.LENGTH_SHORT).show();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                Toast.makeText(context,"Failed to restore database backup: " + e.getMessage(),Toast.LENGTH_LONG).show();
+//                Log.e("Database", "Failed to restore database backup: " + e.getMessage());
+//                //Toast.makeText(context,"Failed to restore database backup",Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Toast.makeText(context,"Missing backup 'CollectomonDatabase' in 'Downloads' folder",Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-    // Save the database to the Downloads directory
-    public void saveBackup() {
-        String backupFileName = "CollectomonDatabase.db";
-        File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
+    // Save the database to the given FileOutputStream
+    public void saveBackup(FileOutputStream fos) {
+        // Get a readable database
+        SQLiteDatabase db = getReadableDatabase();
 
-        try {
-            SQLiteDatabase db = getWritableDatabase();
+        // Get the path of the database file
+        String dbPath = db.getPath();
 
-            File dbFile = new File(db.getPath());
-            FileInputStream fis = new FileInputStream(dbFile);
-            FileOutputStream fos = new FileOutputStream(backupFile);
-
+        // Create an input stream for the database file
+        try (FileInputStream fis = new FileInputStream(dbPath)) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = fis.read(buffer)) > 0) {
                 fos.write(buffer, 0, length);
             }
-
-            fos.flush();
-            fos.close();
-            fis.close();
-
-            Toast.makeText(context,"Backup 'CollectomonDatabase' created in 'Downloads'",Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(context,"Failed to create backup",Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Restore the database from the Downloads directory
-    public void restoreBackup() {
-        String backupFileName = "CollectomonDatabase.db";
-        File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
+    // Restore the database from the given FileInputStream
+    public void restoreBackup(FileInputStream fis) {
+        // Get a writable database
+        SQLiteDatabase db = getWritableDatabase();
 
-        if (backupFile.exists()) {
-            try {
-                SQLiteDatabase db = getWritableDatabase();
+        // Get the path of the database file
+        String dbPath = db.getPath();
 
-                // Clear the existing table
-                db.execSQL("DELETE FROM " + TABLE_NAME);
-
-                FileInputStream fis = new FileInputStream(backupFile);
-                FileOutputStream fos = new FileOutputStream(db.getPath());
-
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = fis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, length);
-                }
-
-                fos.flush();
-                fos.close();
-                fis.close();
-
-                Toast.makeText(context,"Database backup restored successfully",Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-                Toast.makeText(context,"Failed to restore database backup",Toast.LENGTH_SHORT).show();
+        // Create an output stream for the database file
+        try (FileOutputStream fos = new FileOutputStream(dbPath)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
             }
-        } else {
-            Toast.makeText(context,"Missing backup 'CollectomonDatabase' in 'Downloads' folder",Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,118 +1,20 @@
-//package com.example.collectomon;
-//
-//import android.annotation.SuppressLint;
-//import android.os.Bundle;
-//import android.view.Menu;
-//import android.view.MenuItem;
-//
-//import androidx.annotation.NonNull;
-//import androidx.appcompat.app.AppCompatActivity;
-//import androidx.appcompat.app.AppCompatDelegate;
-//import androidx.fragment.app.Fragment;
-//import androidx.fragment.app.FragmentManager;
-//import androidx.fragment.app.FragmentTransaction;
-//
-//import com.google.android.material.bottomnavigation.BottomNavigationView;
-//import com.google.android.material.navigation.NavigationBarView;
-//
-//public class MainActivity extends AppCompatActivity {
-//
-//    private BottomNavigationView bottomNavigationView;
-//    private HomeFragment homeFragment;
-//    private SearchFragment searchFragment;
-//    private CollectionFragment collectionFragment;
-//    @SuppressLint("ObsoleteSdkInt")
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.frag_all_bottom_nav_menu);
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().setNavigationBarColor(getColor(R.color.bottom_bar));
-//        }
-//
-//        bottomNavigationView = findViewById(R.id.navigationView);
-//        bottomNavigationView.setOnItemSelectedListener(navItemSelectedListener);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//        homeFragment = new HomeFragment();
-//        searchFragment = new SearchFragment();
-//        collectionFragment = new CollectionFragment();
-//
-//        Menu menu = bottomNavigationView.getMenu();
-//        menu.getItem(0).setIcon(R.drawable.icon_home_filled);
-//        bottomNavigationView = findViewById(R.id.navigationView);
-//
-//        getSupportFragmentManager().beginTransaction()
-//                .add(R.id.fragmentContainer, homeFragment, "home")
-//                .add(R.id.fragmentContainer, searchFragment, "search")
-//                .hide(searchFragment)
-//                .add(R.id.fragmentContainer, collectionFragment, "collection")
-//                .hide(collectionFragment)
-//                .commit();
-//
-//    }
-//
-//
-//    private final NavigationBarView.OnItemSelectedListener navItemSelectedListener =
-//            item -> {
-//                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//
-//
-//                    if (item.getItemId() == R.id.menu_home) {
-//                        item.setIcon(R.drawable.icon_home_filled);
-//                        transaction.show(homeFragment);
-//                        transaction.hide(searchFragment);
-//                        transaction.hide(collectionFragment);
-//                    }
-//                    else if (item.getItemId() == R.id.menu_search) {
-//                        transaction.show(searchFragment);
-//                        transaction.hide(homeFragment);
-//                        transaction.hide(collectionFragment);
-//                    }
-//                    else if (item.getItemId() == R.id.menu_collection) {
-//                        transaction.show(collectionFragment);
-//                        transaction.hide(homeFragment);
-//                        transaction.hide(searchFragment);
-//                    } else {
-//                        return false;
-//                    }
-//
-//                transaction.commit();
-//                updateIcons(item.getItemId()); // A method to update icons based on selection
-//                return true;
-//            };
-//
-//    private void updateIcons(int itemId) {
-//        Menu menu = bottomNavigationView.getMenu();
-//        menu.findItem(R.id.menu_home).setIcon(R.drawable.icon_home_non);
-//        menu.findItem(R.id.menu_search).setIcon(R.drawable.icon_search_non);
-//        menu.findItem(R.id.menu_collection).setIcon(R.drawable.icon_collection_non);
-//
-//        if (itemId == R.id.menu_home) {
-//            menu.findItem(R.id.menu_home).setIcon(R.drawable.icon_home_filled);
-//        } else if (itemId == R.id.menu_search) {
-//            menu.findItem(R.id.menu_search).setIcon(R.drawable.icon_search_filled);
-//        } else if (itemId == R.id.menu_collection) {
-//            menu.findItem(R.id.menu_collection).setIcon(R.drawable.icon_collection_filled);
-//        }
-//    }
-//    private void loadFragment(Fragment fragment) {
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.fragmentContainer, fragment);
-//        transaction.commit();
-//    }
-//}
-
-
 package com.example.collectomon;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
@@ -122,9 +24,18 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+@RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+public class MainActivity extends AppCompatActivity implements BackupRestoreActions{
 
     private BottomNavigationView bottomNavigationView;
+    private CardDatabase db;
 
     @SuppressLint("ObsoleteSdkInt")
     @Override
@@ -135,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(getColor(R.color.bottom_bar));
         }
+        db = new CardDatabase(this);
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //            final WindowInsetsController insetsController = getWindow().getInsetsController();
@@ -203,6 +115,83 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.fragmentContainer, fragment);
         transaction.commit();
     }
+
+
+    //SaveBackup exception handling
+    private final ActivityResultLauncher<Intent> saveBackupResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                Uri uri = data.getData();
+                                try {
+                                    assert uri != null;
+                                    try (ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "w")) {
+                                        assert pfd != null;
+                                        try (FileOutputStream fos = new FileOutputStream(pfd.getFileDescriptor())) {
+                                            db.saveBackup(fos);
+                                            Toast.makeText(this, "Database backup saved successfully.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(this, "Failed to save database backup: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    });
+
+    //RestoreBackup exception handling
+    private final ActivityResultLauncher<Intent> restoreBackupResultLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            if (data != null) {
+                                Uri uri = data.getData();
+                                try {
+                                    assert uri != null;
+                                    try (ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r")) {
+                                        assert pfd != null;
+                                        try (FileInputStream fis = new FileInputStream(pfd.getFileDescriptor())) {
+                                            db.restoreBackup(fis);
+                                            Toast.makeText(this, "Database backup restored successfully.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(this, "Failed to restore database backup: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    });
+
+    // Save the database to a user-chosen location
+    public void saveBackup() {
+        // Get the current time and format it as a string
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+        Date now = new Date();
+        String timeString = formatter.format(now);
+
+        // Create the filename
+        String filename = "Collectomon_" + timeString + ".db";
+
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*"); // Open all types of files
+        intent.putExtra(Intent.EXTRA_TITLE, filename); // Set the filename
+        saveBackupResultLauncher.launch(intent);
+    }
+
+    // Restore the database from a user-chosen location
+    public void restoreBackup() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*"); // Open all types of files
+        restoreBackupResultLauncher.launch(intent);
+    }
+
 }
 
 

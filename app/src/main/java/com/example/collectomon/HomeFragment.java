@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -40,7 +41,7 @@ public class HomeFragment extends Fragment {
     Context context;
     private ArrayAdapter<String> storedArtistNames;
     private AutoCompleteTextView addArtist;
-
+    private BackupRestoreActions backupRestoreActions;
     //stored list of artist names
 
     String[] artistSuggestions = {
@@ -63,6 +64,15 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+    }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof BackupRestoreActions) {
+            backupRestoreActions = (BackupRestoreActions) context;
+        } else {
+            throw new RuntimeException(context + " must implement BackupRestoreActions");
+        }
     }
 
     // Inflate the layout for this fragment
@@ -104,7 +114,7 @@ public class HomeFragment extends Fragment {
             TextView message = dialogView.findViewById(R.id.dialog_message);
             message.setText("Do you want to backup your collection?");
             message.setTextColor(Color.WHITE);  // Set the color
-            builder.setPositiveButton("Yes", (dialog, which) -> db.saveBackup())
+            builder.setPositiveButton("Yes", (dialog, which) -> backupRestoreActions.saveBackup())
                     .setNegativeButton("No", null)
                     .show();
         });
@@ -121,7 +131,7 @@ public class HomeFragment extends Fragment {
             message.setText("Do you want to restore a previous backup?");
             message.setTextColor(Color.WHITE);  // Set the color
 
-            builder.setPositiveButton("Yes", (dialog, which) -> db.restoreBackup())
+            builder.setPositiveButton("Yes", (dialog, which) -> backupRestoreActions.restoreBackup())
                     .setNegativeButton("No", null)
                     .show();
         });
@@ -240,4 +250,8 @@ public class HomeFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+
+
+
 }
