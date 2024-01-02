@@ -149,29 +149,33 @@ public class CardDatabase extends SQLiteOpenHelper {
         String backupFileName = "CollectomonDatabase.db";
         File backupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), backupFileName);
 
-        try {
-            SQLiteDatabase db = getWritableDatabase();
+        if (backupFile.exists()) {
+            try {
+                SQLiteDatabase db = getWritableDatabase();
 
-            // Clear the existing table
-            db.execSQL("DELETE FROM " + TABLE_NAME);
+                // Clear the existing table
+                db.execSQL("DELETE FROM " + TABLE_NAME);
 
-            FileInputStream fis = new FileInputStream(backupFile);
-            FileOutputStream fos = new FileOutputStream(db.getPath());
+                FileInputStream fis = new FileInputStream(backupFile);
+                FileOutputStream fos = new FileOutputStream(db.getPath());
 
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = fis.read(buffer)) > 0) {
-                fos.write(buffer, 0, length);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = fis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, length);
+                }
+
+                fos.flush();
+                fos.close();
+                fis.close();
+
+                Toast.makeText(context,"Database backup restored successfully",Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(context,"Failed to restore database backup",Toast.LENGTH_SHORT).show();
             }
-
-            fos.flush();
-            fos.close();
-            fis.close();
-
-            Toast.makeText(context,"Database backup restored successfully",Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(context,"Missing backup 'CollectomonDatabase' in downloads folder",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context,"Missing backup 'CollectomonDatabase' in 'Downloads' folder",Toast.LENGTH_SHORT).show();
         }
     }
 
