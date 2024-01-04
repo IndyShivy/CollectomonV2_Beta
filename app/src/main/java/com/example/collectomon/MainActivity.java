@@ -24,18 +24,30 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+
 
 @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 public class MainActivity extends AppCompatActivity implements BackupRestoreActions{
 
     private BottomNavigationView bottomNavigationView;
     private CardDatabase db;
+    public static ArrayList<String> pokemonNamesList;
 
     @SuppressLint("ObsoleteSdkInt")
     @Override
@@ -71,6 +83,13 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
         Menu menu = bottomNavigationView.getMenu();
         menu.getItem(0).setIcon(R.drawable.icon_home_filled);
         bottomNavigationView = findViewById(R.id.navigationView);
+        pokemonNamesList = new ArrayList<>();
+        fetchPokemonNames();
+
+        // Sort the pokemonNamesList
+        Collections.sort(pokemonNamesList);
+        PokeNameHolder.getInstance().setPokemonNames(pokemonNamesList);
+
 
     }
     private final NavigationBarView.OnItemSelectedListener  navItemSelectedListener = new NavigationBarView.OnItemSelectedListener() {
@@ -190,6 +209,32 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // Open all types of files
         restoreBackupResultLauncher.launch(intent);
+    }
+    // Fetch the names of all Pokemon from the PokeAPI
+    private void fetchPokemonNames() {
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("https://pokeapi.co/api/v2/pokemon?limit=1200")
+                        .build();
+
+                Response response = client.newCall(request).execute();
+                assert response.body() != null;
+                String jsonData = response.body().string();
+
+                JSONObject jsonObject = new JSONObject(jsonData);
+                JSONArray resultsArray = jsonObject.getJSONArray("results");
+                for (int i = 0; i < resultsArray.length(); i++) {
+                    JSONObject pokemonObject = resultsArray.getJSONObject(i);
+                    String pokemonName = pokemonObject.getString("name");
+                    pokemonNamesList.add(pokemonName);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }

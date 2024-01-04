@@ -28,10 +28,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 
-// Fragment for the Collection page
+/** @noinspection ALL*/ // Fragment for the Collection page
 public class CollectionFragment extends Fragment {
 
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
@@ -47,6 +46,8 @@ public class CollectionFragment extends Fragment {
     View overlay, artistView;
     EditText searchEditText;
     String artistSelected;
+    ArrayList<String> artistNames;
+    ArrayList<String> pokemonNamesList;
 
     // Required empty public constructor
     @Override
@@ -114,20 +115,32 @@ public class CollectionFragment extends Fragment {
         loadName.setText(artistSelected);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-
+        pokemonNamesList = PokeNameHolder.getInstance().getPokemonNames();
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
-        List<String> artistNames = new ArrayList<>();
+        ArrayList<String> artistNames = new ArrayList<>();
         Set<String> artistSet = sharedPreferences.getStringSet(ARTIST_KEY, null);
         if (artistSet != null) {
             artistNames = new ArrayList<>(artistSet);
         }
         // Add "All Cards" option at the beginning of the list
         artistNames.add(0, "All Cards");
-        artistNames.add(1, "Pikachu");
-        artistNames.add(2, "Eevee");
-        // Sort the list of artist names
-        Collections.sort(artistNames.subList(3, artistNames.size()));
+        ArrayList<String> pokeNames = new ArrayList<>();
+        //if the names in the artistNames list are pokemon names, push them to the front of the list alphabetically
+        for (int i = 1; i < artistNames.size(); i++) {
+            if (pokeNameChecker(artistNames.get(i))) {
+                pokeNames.add(artistNames.get(i));
+                artistNames.remove(i);
+            }
+        }
+        Collections.sort(pokeNames);
+        Collections.sort(artistNames.subList(pokeNames.size(), artistNames.size()));
 
+        //Add each pokemon name to the artistNames list in reverse order
+
+        for (int i = pokeNames.size(); i > 0; i--) {
+            artistNames.add(1, pokeNames.get(i - 1));
+
+        }
 
         //add select artist to list
         ArrayAdapter<String> listViewAdapter = new ArrayAdapter<>(context, R.layout.frag_search_artist_dropdown, artistNames);
@@ -148,47 +161,32 @@ public class CollectionFragment extends Fragment {
 
         loadArtistList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedArtist = parent.getItemAtPosition(position).toString();
-            switch (selectedArtist) {
-                case "All Cards":
-                    artistSelected = "All Cards";
-                    loadName.setText(artistSelected);
-                    loadArtistList.setVisibility(View.GONE);
-                    overlay.setVisibility(View.GONE);
-                    populateRecyclerView();
-                    break;
-                case "Pikachu": {
-                    ArrayList<CardItem> cardItems = db.getCardsByCardName("Pikachu");
-                    collectionAdapter = new CollectionAdapter(cardItems, context);
-                    loadName.setText(selectedArtist);
-                    loadArtistList.setVisibility(View.GONE);
-                    overlay.setVisibility(View.GONE);
-                    artistSelected = selectedArtist;
-                    recyclerView.setAdapter(collectionAdapter);
-                    break;
-                }
-                case "Eevee": {
-                    ArrayList<CardItem> cardItems = db.getCardsByCardName("Eevee");
-                    collectionAdapter = new CollectionAdapter(cardItems, context);
-                    loadName.setText(selectedArtist);
-                    loadArtistList.setVisibility(View.GONE);
-                    overlay.setVisibility(View.GONE);
-                    artistSelected = selectedArtist;
-                    recyclerView.setAdapter(collectionAdapter);
-                    break;
-                }
-                default: {
-                    ArrayList<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
-                    //sort the card by name
-                    cardItems.sort(Comparator.comparing(CardItem::getCardName));
-                    collectionAdapter = new CollectionAdapter(cardItems, context);
-                    loadName.setText(selectedArtist);
-                    loadArtistList.setVisibility(View.GONE);
-                    overlay.setVisibility(View.GONE);
-                    artistSelected = selectedArtist;
-                    recyclerView.setAdapter(collectionAdapter);
-                    break;
-                }
+            if (selectedArtist.equals("All Cards")) {
+                artistSelected = "All Cards";
+                loadName.setText(artistSelected);
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
+                populateRecyclerView();
+            } else if (pokeNameChecker(selectedArtist)) {
+                ArrayList<CardItem> cardItems = db.getCardsByCardName(selectedArtist);
+                collectionAdapter = new CollectionAdapter(cardItems, context);
+                loadName.setText(selectedArtist);
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
+                artistSelected = selectedArtist;
+                recyclerView.setAdapter(collectionAdapter);
+            } else {
+                ArrayList<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
+                //sort the card by name
+                cardItems.sort(Comparator.comparing(CardItem::getCardName));
+                collectionAdapter = new CollectionAdapter(cardItems, context);
+                loadName.setText(selectedArtist);
+                loadArtistList.setVisibility(View.GONE);
+                overlay.setVisibility(View.GONE);
+                artistSelected = selectedArtist;
+                recyclerView.setAdapter(collectionAdapter);
             }
+
         });
 
         overlay.setOnTouchListener((v, event) -> {
@@ -283,12 +281,18 @@ public class CollectionFragment extends Fragment {
         scaleDown.start();
 
     }
+    // Close the keyboard
     private void closeKeyboard() {
         View view = requireActivity().getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    //check if the name is a pokemon name
+    private boolean pokeNameChecker(String name) {
+        return pokemonNamesList.contains(name.toLowerCase());
     }
 
 }

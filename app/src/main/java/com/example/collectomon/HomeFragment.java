@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+
 //HomeFragment is the first fragment that is displayed when the app is opened
 public class HomeFragment extends Fragment {
     public ArrayList<String> artistNames;
@@ -47,10 +48,10 @@ public class HomeFragment extends Fragment {
     String[] artistSuggestions = {
             "0313","Akira Komayama", "Amelicart", "Asako Ito", "Atsuko Nishida", "Chibi",
             "Eske Yoshinob", "Hasuno", "Hataya", "Hyogonosuke", "Kawayoo", "Kiyotaka Oshiyama",
-            "Kodama", "Kurumitsu", "Kyoko Umemato", "Lee Hyunjung", "Mahou",
+            "Kodama", "Kurumitsu", "Kyoko Umemoto", "Lee Hyunjung", "Mahou",
             "Megumi Mizutani", "Miki Kudo", "Miki Tanaka", "Mina Nakai", "Misa Tsutsui",
             "Mitsuhiro Arita", "Mizue", "Naoyo Kimura", "Okacheke", "Ooyama", "Oswaldo Kato",
-            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh", "Sowsow", "Sui",
+            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh.", "Sowsow", "Sui",
             "Tetsuya Koizumi", "Tika Matsuno", "Tokiya", "You Iribi", "Yuka Morii"
     };
 
@@ -101,7 +102,6 @@ public class HomeFragment extends Fragment {
         storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
         listViewArtists.setAdapter(storedArtistNames);
         listViewArtists.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
 
         backup.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogCustom);
@@ -242,6 +242,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+    //close the keyboard
     private void closeKeyboard() {
         View view = requireActivity().getCurrentFocus();
         if (view != null) {
@@ -249,6 +250,7 @@ public class HomeFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
 //    // Web scrape the set names
 //    private void webScrapeSetNames() {
 //        new Thread(() -> {
