@@ -139,7 +139,6 @@ public class CollectionFragment extends Fragment {
 
         for (int i = pokeNames.size(); i > 0; i--) {
             artistNames.add(1, pokeNames.get(i - 1));
-
         }
 
         //add select artist to list
