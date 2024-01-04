@@ -82,7 +82,7 @@ public class CollectionFragment extends Fragment {
             }
 
             if (artistSelected != null) {
-                List<CardItem> cardItems = db.getCardsByArtist(artistSelected);
+                ArrayList<CardItem> cardItems = db.getCardsByArtist(artistSelected);
                 collectionAdapter = new CollectionAdapter(cardItems, context);
                 recyclerView.setAdapter(collectionAdapter);
             }
@@ -152,7 +152,7 @@ public class CollectionFragment extends Fragment {
                         overlay.setVisibility(View.GONE);
                         populateRecyclerView();
                     } else {
-                        List<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
+                        ArrayList<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
                         collectionAdapter = new CollectionAdapter(cardItems, context);
                         loadName.setText(selectedArtist);
                         loadArtistList.setVisibility(View.GONE);
@@ -215,9 +215,9 @@ public class CollectionFragment extends Fragment {
 
         // Filter the list of cards by the search text
         private void filterCardItems(String searchText) {
-            List<CardItem> filteredList = new ArrayList<>();
+            ArrayList<CardItem> filteredList = new ArrayList<>();
 
-            List<CardItem> cardsToFilter;
+            ArrayList<CardItem> cardsToFilter;
             if (artistSelected.equals("All Cards")) {
                 cardsToFilter = db.getAllCards();
             } else {
@@ -236,7 +236,7 @@ public class CollectionFragment extends Fragment {
     // Populate the RecyclerView with the list of cards
     public void populateRecyclerView() {
         db = new CardDatabase(context);
-        List<CardItem> cards = db.getAllCards();
+        ArrayList<CardItem> cards = db.getAllCards();
         collectionAdapter = new CollectionAdapter(cards, context);
         recyclerView.setAdapter(collectionAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));

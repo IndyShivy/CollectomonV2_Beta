@@ -26,13 +26,12 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 //HomeFragment is the first fragment that is displayed when the app is opened
 public class HomeFragment extends Fragment {
-    public List<String> artistNames;
+    public ArrayList<String> artistNames;
     private static final String PREFS_FILE_NAME = "MyPrefsFile";
     private static final String ARTIST_KEY = "artist";
     private SharedPreferences sharedPreferences;
@@ -221,7 +220,7 @@ public class HomeFragment extends Fragment {
     }
 
     //save the list of artists to shared preferences
-    private void saveArtistList(List<String> artistList) {
+    private void saveArtistList(ArrayList<String> artistList) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         artistList.sort(String::compareToIgnoreCase);
         Set<String> set = new HashSet<>(artistList);

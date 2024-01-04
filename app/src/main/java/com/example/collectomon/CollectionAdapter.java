@@ -15,16 +15,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 // Adapter for the list of cards on the search page
 public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.ViewHolder> {
-    private List<CardItem> cardItems;
+    private ArrayList<CardItem> cardItems;
     private CardDatabase db;
     private final Context context;
 
     // Constructor
-    public CollectionAdapter(List<CardItem> cardItems,Context context) {
+    public CollectionAdapter(ArrayList<CardItem> cardItems, Context context) {
         this.cardItems = cardItems;
         this.context = context;
 
@@ -91,7 +91,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
 
     // Filter the list of cards
     @SuppressLint("NotifyDataSetChanged")
-    public void filterList(List<CardItem> filteredList) {
+    public void filterList(ArrayList<CardItem> filteredList) {
         ((Activity) context).runOnUiThread(() -> {
             cardItems = filteredList;
             notifyDataSetChanged();

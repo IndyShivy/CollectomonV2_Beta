@@ -60,7 +60,7 @@ public class SearchFragment extends Fragment {
     Button viewArtistList;
     View overlay,artistView;
     private CardAdapter cardAdapter;
-    private List<CardItem> cardItems;
+    private ArrayList<CardItem> cardItems;
     private AppCompatActivity activity;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -106,7 +106,7 @@ public class SearchFragment extends Fragment {
         }
         // Filter the list of cards based on the search text
         private void filterCardItems(String searchText) {
-            List<CardItem> filteredList = new ArrayList<>();
+            ArrayList<CardItem> filteredList = new ArrayList<>();
 
             for (CardItem cardItem : cardItems) {
                 if (cardItem.getCardName().toLowerCase().startsWith(searchText.toLowerCase())) {

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,13 +19,13 @@ import java.util.Set;
 public class ArtistAdapter extends ArrayAdapter<String> {
     private static final String ARTIST_KEY = "artist";
     private final SharedPreferences sharedPreferences;
-    List<String> artistsGlobal;
+    ArrayList<String> artistsGlobal;
     Button deleteButton;
     TextView artistName;
     String artist;
 
     // Constructor
-    public ArtistAdapter(Context context, List<String> artists, SharedPreferences sharedPreferences) {
+    public ArtistAdapter(Context context, ArrayList<String> artists, SharedPreferences sharedPreferences) {
         super(context, 0, artists);
         this.sharedPreferences = sharedPreferences;
         artistsGlobal = artists;

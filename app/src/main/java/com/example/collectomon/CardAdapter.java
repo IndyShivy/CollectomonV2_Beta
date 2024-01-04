@@ -16,19 +16,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 // Adapter for the list of cards on the search page
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
-    private List<CardItem> cardItems;
+    private ArrayList<CardItem> cardItems;
     private final Context context;
     private CardDatabase db;
-    ArrayList<CardItem> cardStuff;
+
 
 
     // Constructor
-    public CardAdapter(List<CardItem> cardItems, Context context) {
+    public CardAdapter(ArrayList<CardItem> cardItems, Context context) {
         this.cardItems = cardItems;
         this.context = context;
     }
@@ -36,7 +35,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     // Filter the list of cards
     @SuppressLint("NotifyDataSetChanged")
-    public void filterList(List<CardItem> filteredList) {
+    public void filterList(ArrayList<CardItem> filteredList) {
         ((Activity) context).runOnUiThread(() -> {
             cardItems = filteredList;
             notifyDataSetChanged();
@@ -77,7 +76,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.frag_search_adapter_item, parent, false);
         db = new CardDatabase(context);
-        cardStuff = new ArrayList<>();
+        //cardStuff = new ArrayList<>();
         return new ViewHolder(view);
     }
 
@@ -112,9 +111,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
         holder.addButton.setOnClickListener(v -> {
 
-                cardStuff.add(cardItem);
+                //cardStuff.add(cardItem);
                 db.addCard(cardItem);
-
                 notifyItemInserted(cardItems.size() - 1);
                 notifyItemRangeChanged(cardItems.size() - 1, getItemCount());
                 holder.addButton.setVisibility(View.GONE);

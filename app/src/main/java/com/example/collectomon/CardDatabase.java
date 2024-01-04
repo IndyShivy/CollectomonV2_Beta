@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 // Database for storing cards
 public class CardDatabase extends SQLiteOpenHelper {
@@ -220,8 +219,8 @@ public class CardDatabase extends SQLiteOpenHelper {
     }
 
     // Get all cards by artist
-    public List<CardItem> getCardsByArtist(String artistName) {
-        List<CardItem> cardList = new ArrayList<>();
+    public ArrayList<CardItem> getCardsByArtist(String artistName) {
+        ArrayList<CardItem> cardList = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
 
         String[] projection = {
@@ -323,8 +322,8 @@ public class CardDatabase extends SQLiteOpenHelper {
     }
 
     // Get all cards from the database
-    public List<CardItem> getAllCards() {
-        List<CardItem> cards = new ArrayList<>();
+    public ArrayList<CardItem> getAllCards() {
+        ArrayList<CardItem> cards = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         if (cursor.moveToFirst()) {
