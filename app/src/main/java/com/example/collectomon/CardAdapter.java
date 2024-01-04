@@ -110,14 +110,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         holder.cardDetailsTextView.setText(cardItem.getCardDetails());
 
         holder.addButton.setOnClickListener(v -> {
-
-                //cardStuff.add(cardItem);
                 db.addCard(cardItem);
-                notifyItemInserted(cardItems.size() - 1);
-                notifyItemRangeChanged(cardItems.size() - 1, getItemCount());
                 holder.addButton.setVisibility(View.GONE);
                 holder.displayAddedText.setVisibility(View.VISIBLE);
-
         });
     }
 }
