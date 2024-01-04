@@ -78,7 +78,7 @@ public class SearchFragment extends Fragment {
                 overlay.setVisibility(View.GONE);
             }
             if (artistSelected != null) {
-                webScrape(artistSelected);
+                webScrapeCards(artistSelected);
             }
         }
     }
@@ -225,7 +225,7 @@ public class SearchFragment extends Fragment {
             Toast.makeText(context, "Searching...", Toast.LENGTH_SHORT).show();
 
             //if no cards are found, send a toast message to the user
-            webScrape(selectedArtist);
+            webScrapeCards(selectedArtist);
             closeKeyboard();
         });
 
@@ -257,7 +257,7 @@ public class SearchFragment extends Fragment {
 
 
 // Web scrape the data from the website
-    public void webScrape(String name) {
+    public void webScrapeCards(String name) {
         cardItems.clear();
         String stringWithoutGaps = name.replaceAll("\\s+", "");
         String modifiedName = stringWithoutGaps.toLowerCase();

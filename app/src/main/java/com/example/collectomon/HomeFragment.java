@@ -41,6 +41,7 @@ public class HomeFragment extends Fragment {
     private ArrayAdapter<String> storedArtistNames;
     private AutoCompleteTextView addArtist;
     private BackupRestoreActions backupRestoreActions;
+    //ArrayList<String> setNameList;
     //stored list of artist names
 
     String[] artistSuggestions = {
@@ -158,6 +159,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        //webScrapeSetNames();
         addArtist.addTextChangedListener(new TextWatcher() {
 
             //
@@ -182,7 +184,6 @@ public class HomeFragment extends Fragment {
         });
 
         // Close the keyboard when the user touches the screen
-        // Close the keyboard when the user touches the screen
         view.setOnTouchListener((v, event) -> {
             closeKeyboard();
             return false;
@@ -192,7 +193,6 @@ public class HomeFragment extends Fragment {
             closeKeyboard();
             return false;
         });
-
         return view;
     }
 
@@ -249,6 +249,40 @@ public class HomeFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+//    // Web scrape the set names
+//    private void webScrapeSetNames() {
+//        new Thread(() -> {
+//            try {
+//                // The URL of the webpage to scrape
+//                String url = "https://www.serebii.net/card/english.shtml";
+//
+//                // Fetch the HTML code of the webpage
+//                Document document = Jsoup.connect(url).get();
+//
+//                // Select the elements that contain the set names
+//                Elements setElements = document.select("td.cen > a");
+//
+//                // Create an ArrayList to hold the set names
+//                setNameList = new ArrayList<>();
+//
+//                // Iterate over each element and extract the set name
+//                for (Element setElement : setElements) {
+//                    String setName = setElement.text(); // Extract the text (set name)
+//                    setNameList.add(setName); // Add set name to ArrayList
+//                }
+//                // Print the ArrayList of set names
+//                for (String setName : setNameList) {
+//                    System.out.println(setName);
+//                }
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//    }
+//    public ArrayList<String> getSetNameList(){
+//        return setNameList;
+//    }
 
 
 

@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -122,8 +123,10 @@ public class CollectionFragment extends Fragment {
         }
         // Add "All Cards" option at the beginning of the list
         artistNames.add(0, "All Cards");
+        artistNames.add(1, "Pikachu");
+        artistNames.add(2, "Eevee");
         // Sort the list of artist names
-        Collections.sort(artistNames.subList(1, artistNames.size()));
+        Collections.sort(artistNames.subList(3, artistNames.size()));
 
 
         //add select artist to list
@@ -145,21 +148,47 @@ public class CollectionFragment extends Fragment {
 
         loadArtistList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedArtist = parent.getItemAtPosition(position).toString();
-                    if (selectedArtist.equals("All Cards")) {
-                        artistSelected = "All Cards";
-                        loadName.setText(artistSelected);
-                        loadArtistList.setVisibility(View.GONE);
-                        overlay.setVisibility(View.GONE);
-                        populateRecyclerView();
-                    } else {
-                        ArrayList<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
-                        collectionAdapter = new CollectionAdapter(cardItems, context);
-                        loadName.setText(selectedArtist);
-                        loadArtistList.setVisibility(View.GONE);
-                        overlay.setVisibility(View.GONE);
-                        artistSelected = selectedArtist;
-                        recyclerView.setAdapter(collectionAdapter);
-                    }
+            switch (selectedArtist) {
+                case "All Cards":
+                    artistSelected = "All Cards";
+                    loadName.setText(artistSelected);
+                    loadArtistList.setVisibility(View.GONE);
+                    overlay.setVisibility(View.GONE);
+                    populateRecyclerView();
+                    break;
+                case "Pikachu": {
+                    ArrayList<CardItem> cardItems = db.getCardsByCardName("Pikachu");
+                    collectionAdapter = new CollectionAdapter(cardItems, context);
+                    loadName.setText(selectedArtist);
+                    loadArtistList.setVisibility(View.GONE);
+                    overlay.setVisibility(View.GONE);
+                    artistSelected = selectedArtist;
+                    recyclerView.setAdapter(collectionAdapter);
+                    break;
+                }
+                case "Eevee": {
+                    ArrayList<CardItem> cardItems = db.getCardsByCardName("Eevee");
+                    collectionAdapter = new CollectionAdapter(cardItems, context);
+                    loadName.setText(selectedArtist);
+                    loadArtistList.setVisibility(View.GONE);
+                    overlay.setVisibility(View.GONE);
+                    artistSelected = selectedArtist;
+                    recyclerView.setAdapter(collectionAdapter);
+                    break;
+                }
+                default: {
+                    ArrayList<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
+                    //sort the card by name
+                    cardItems.sort(Comparator.comparing(CardItem::getCardName));
+                    collectionAdapter = new CollectionAdapter(cardItems, context);
+                    loadName.setText(selectedArtist);
+                    loadArtistList.setVisibility(View.GONE);
+                    overlay.setVisibility(View.GONE);
+                    artistSelected = selectedArtist;
+                    recyclerView.setAdapter(collectionAdapter);
+                    break;
+                }
+            }
         });
 
         overlay.setOnTouchListener((v, event) -> {
