@@ -89,8 +89,6 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
         // Sort the pokemonNamesList
         Collections.sort(pokemonNamesList);
         PokeNameHolder.getInstance().setPokemonNames(pokemonNamesList);
-
-
     }
     private final NavigationBarView.OnItemSelectedListener  navItemSelectedListener = new NavigationBarView.OnItemSelectedListener() {
         @SuppressLint("NonConstantResourceId")

@@ -1,6 +1,7 @@
 package com.example.collectomon;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +45,18 @@ public class ArtistAdapter extends ArrayAdapter<String> {
         artist = getItem(position);
         artistName.setText(artist);
 
+        // Check if the artist name is a Pokemon name
+        if (PokeNameHolder.getInstance().getPokemonNames().contains(artist.toLowerCase())) {
+            artistName.setTextColor(Color.parseColor("#FFCB05"));
+        }
+
         deleteButton.setOnClickListener(v -> {
             remove(getItem(position));
             saveArtistList(artistsGlobal);
             notifyDataSetChanged();
         });
+
+
         return convertView;
     }
     // Save the list of artists to shared preferences
@@ -58,4 +66,5 @@ public class ArtistAdapter extends ArrayAdapter<String> {
         editor.putStringSet(ARTIST_KEY, set);
         editor.apply();
     }
+
 }

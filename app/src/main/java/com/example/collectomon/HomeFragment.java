@@ -103,6 +103,7 @@ public class HomeFragment extends Fragment {
         listViewArtists.setAdapter(storedArtistNames);
         listViewArtists.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
+
         backup.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogCustom);
             LayoutInflater backupInflate = getLayoutInflater();
