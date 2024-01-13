@@ -1,7 +1,6 @@
 package com.example.collectomon;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ public class ArtistAdapter extends ArrayAdapter<String> {
     Button deleteButton;
     TextView artistName;
     String artist;
+    CardDatabase db;
 
     // Constructor
     public ArtistAdapter(Context context, ArrayList<String> artists, SharedPreferences sharedPreferences) {
@@ -43,19 +43,24 @@ public class ArtistAdapter extends ArrayAdapter<String> {
         deleteButton = convertView.findViewById(R.id.delete_button);
 
         artist = getItem(position);
-        artistName.setText(artist);
-
-        // Check if the artist name is a Pokemon name
-        if (PokeNameHolder.getInstance().getPokemonNames().contains(artist.toLowerCase())) {
-            artistName.setTextColor(Color.parseColor("#FFCB05"));
+        try {
+             db = new CardDatabase(getContext());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        int cardCount = db.getCardCountByArtist(artist);
+        String artistText = artist + " (" + cardCount + ")";
+        artistName.setText(artistText);
+
+//        if (PokeNameHolder.getInstance().getPokemonNames().contains(artist.toLowerCase())) {
+//            artistName.setTextColor(Color.parseColor("#FFCB05"));
+//        }
 
         deleteButton.setOnClickListener(v -> {
             remove(getItem(position));
             saveArtistList(artistsGlobal);
             notifyDataSetChanged();
         });
-
 
         return convertView;
     }

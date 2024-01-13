@@ -364,5 +364,28 @@ public class CardDatabase extends SQLiteOpenHelper {
         db.close();
         return cards;
     }
+    public ArrayList<String> getAllArtistNames() {
+        ArrayList<String> artistNames = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT DISTINCT " + ARTIST_NAME + " FROM " + TABLE_NAME, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String artistName = cursor.getString(0);
+                artistNames.add(artistName);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return artistNames;
+    }
+    public int getCardCountByArtist(String artistName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " + ARTIST_NAME + " = ?", new String[]{artistName});
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return count;
+    }
 }
 

@@ -42,16 +42,15 @@ public class HomeFragment extends Fragment {
     private ArrayAdapter<String> storedArtistNames;
     private AutoCompleteTextView addArtist;
     private BackupRestoreActions backupRestoreActions;
-    //ArrayList<String> setNameList;
-    //stored list of artist names
+
 
     String[] artistSuggestions = {
             "0313","Akira Komayama", "Amelicart", "Asako Ito", "Atsuko Nishida", "Chibi",
-            "Eske Yoshinob", "Hasuno", "Hataya", "Hyogonosuke", "Kawayoo", "Kiyotaka Oshiyama",
+            "Eske Yoshinob", "Hasuno", "Hataya", "Hyogonosuke", "Kawayoo","Kedamahadaitai Yawarakai", "Kiyotaka Oshiyama",
             "Kodama", "Kurumitsu", "Kyoko Umemoto", "Lee Hyunjung", "Mahou",
             "Megumi Mizutani", "Miki Kudo", "Miki Tanaka", "Mina Nakai", "Misa Tsutsui",
             "Mitsuhiro Arita", "Mizue", "Naoyo Kimura", "Okacheke", "Ooyama", "Oswaldo Kato",
-            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh.", "Sowsow", "Sui",
+            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh.", "Sowsow", "Sui","Sumiyoshi Kizuki",
             "Tetsuya Koizumi", "Tika Matsuno", "Tokiya", "You Iribi", "Yuka Morii"
     };
 
@@ -250,6 +249,16 @@ public class HomeFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+    public void setArtistNames(ArrayList<String> artistNames) {
+        this.artistNames = artistNames;
+        artistNames.sort(String::compareToIgnoreCase);
+        //remove all the artist from artistNames that is not in the drop down list
+
+
+        storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
+        ListView listViewArtists = requireView().findViewById(R.id.listViewArtists);
+        listViewArtists.setAdapter(storedArtistNames);
     }
 
 //    // Web scrape the set names

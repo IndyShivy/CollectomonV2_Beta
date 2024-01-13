@@ -159,7 +159,31 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
                         }
                     });
 
-    //RestoreBackup exception handling
+//    //RestoreBackup exception handling
+//    private final ActivityResultLauncher<Intent> restoreBackupResultLauncher =
+//            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+//                    result -> {
+//                        if (result.getResultCode() == Activity.RESULT_OK) {
+//                            Intent data = result.getData();
+//                            if (data != null) {
+//                                Uri uri = data.getData();
+//                                try {
+//                                    assert uri != null;
+//                                    try (ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r")) {
+//                                        assert pfd != null;
+//                                        try (FileInputStream fis = new FileInputStream(pfd.getFileDescriptor())) {
+//                                            db.restoreBackup(fis);
+//                                            Toast.makeText(this, "Database backup restored successfully.", Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    }
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                    Toast.makeText(this, "Failed to restore database backup: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                                }
+//                            }
+//                        }
+//                    });
+
     private final ActivityResultLauncher<Intent> restoreBackupResultLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
@@ -173,6 +197,10 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
                                         assert pfd != null;
                                         try (FileInputStream fis = new FileInputStream(pfd.getFileDescriptor())) {
                                             db.restoreBackup(fis);
+                                            ArrayList<String> artistNames = db.getAllArtistNames();
+                                            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+                                            assert homeFragment != null;
+                                            homeFragment.setArtistNames(artistNames);
                                             Toast.makeText(this, "Database backup restored successfully.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -183,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
                             }
                         }
                     });
-
     // Save the database to a user-chosen location
     public void saveBackup() {
         // Get the current time and format it as a string

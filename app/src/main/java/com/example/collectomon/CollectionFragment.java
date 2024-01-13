@@ -124,6 +124,7 @@ public class CollectionFragment extends Fragment {
         }
         // Add "All Cards" option at the beginning of the list
         artistNames.add(0, "All Cards");
+        //artistNames.add(1, "Cute Collection");
         ArrayList<String> pokeNames = new ArrayList<>();
         //if the names in the artistNames list are pokemon names, push them to the front of the list alphabetically
         for (int i = 1; i < artistNames.size(); i++) {
