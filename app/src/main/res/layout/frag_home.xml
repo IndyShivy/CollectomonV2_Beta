@@ -106,7 +106,7 @@
         <Button
             android:id="@+id/backupButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="186dp"
+            android:layout_width="183dp"
             android:layout_height="60dp"
             android:background="@drawable/frag_home_backup_button"
             android:backgroundTint="@color/frag_home_search_add_button"
@@ -117,7 +117,7 @@
         <Button
             android:id="@+id/restoreButton"
             style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="186dp"
+            android:layout_width="183dp"
             android:layout_height="60dp"
             android:background="@drawable/frag_home_restore_button"
             android:backgroundTint="@color/secondary_colour_blue"
