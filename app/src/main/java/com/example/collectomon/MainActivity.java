@@ -2,7 +2,9 @@ package com.example.collectomon;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,7 +36,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
     private BottomNavigationView bottomNavigationView;
     private CardDatabase db;
     public static ArrayList<String> pokemonNamesList;
+    private static final String PREFS_FILE_NAME = "MyPrefsFile";
+    private static final String ARTIST_KEY = "artist";
+    private SharedPreferences sharedPreferences;
 
     @SuppressLint("ObsoleteSdkInt")
     @Override
@@ -59,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
             getWindow().setNavigationBarColor(getColor(R.color.bottom_bar));
         }
         db = new CardDatabase(this);
-
+        sharedPreferences = getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
 //            final WindowInsetsController insetsController = getWindow().getInsetsController();
 //            if (insetsController != null) {
@@ -201,6 +208,10 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
                                             HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
                                             assert homeFragment != null;
                                             homeFragment.setArtistNames(artistNames);
+                                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            Set<String> set = new HashSet<>(artistNames);
+                                            editor.putStringSet(ARTIST_KEY, set);
+                                            editor.apply();
                                             Toast.makeText(this, "Database backup restored successfully.", Toast.LENGTH_SHORT).show();
                                         }
                                     }

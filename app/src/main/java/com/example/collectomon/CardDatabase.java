@@ -364,6 +364,22 @@ public class CardDatabase extends SQLiteOpenHelper {
         db.close();
         return cards;
     }
+//    public ArrayList<String> getAllArtistNames() {
+//        ArrayList<String> artistNames = new ArrayList<>();
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT DISTINCT " + ARTIST_NAME + " FROM " + TABLE_NAME, null);
+//        if (cursor.moveToFirst()) {
+//            do {
+//                String artistName = cursor.getString(0);
+//                artistNames.add(artistName);
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        db.close();
+//        artistNames.sort(String::compareToIgnoreCase);
+//        return artistNames;
+//    }
+    //return the artist names that are not pikachu, eevee, or castform
     public ArrayList<String> getAllArtistNames() {
         ArrayList<String> artistNames = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -371,13 +387,18 @@ public class CardDatabase extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 String artistName = cursor.getString(0);
-                artistNames.add(artistName);
+                ArrayList<CardItem> cards = getCardsByArtist(artistName);
+                if (!cardsArePikachuEeveeCastform(cards)) {
+                    artistNames.add(artistName);
+                }
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
         return artistNames;
     }
+
+    //get the number of cards by artist
     public int getCardCountByArtist(String artistName) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " + ARTIST_NAME + " = ?", new String[]{artistName});
@@ -386,6 +407,16 @@ public class CardDatabase extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return count;
+    }
+    //if the only cards in the artist are pikachu, eevee, or castform, return true
+    private boolean cardsArePikachuEeveeCastform(ArrayList<CardItem> cards) {
+        for (CardItem card : cards) {
+            String cardName = card.getCardName().toLowerCase();
+            if (!cardName.equals("pikachu") && !cardName.equals("eevee") && !cardName.equals("castform")) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

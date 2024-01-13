@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Set;
 
 /** @noinspection ALL*/ // Fragment for the Collection page
@@ -44,7 +43,7 @@ public class CollectionFragment extends Fragment {
     ListView loadArtistList;
     Button viewArtistList;
     View overlay, artistView;
-    EditText searchEditText;
+    EditText cardSearchText;
     String artistSelected;
     ArrayList<String> artistNames;
     ArrayList<String> pokemonNamesList;
@@ -105,8 +104,8 @@ public class CollectionFragment extends Fragment {
         overlay = rootView.findViewById(R.id.overlay);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         overlay.setLayoutParams(params);
-        searchEditText = rootView.findViewById(R.id.searchEditText1);
-        searchEditText.addTextChangedListener(textWatcher);
+        cardSearchText = rootView.findViewById(R.id.searchEditText1);
+        cardSearchText.addTextChangedListener(textWatcher);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         collectionAdapter = new CollectionAdapter(new ArrayList<>(), context);
         recyclerView.setAdapter(collectionAdapter);
@@ -129,6 +128,7 @@ public class CollectionFragment extends Fragment {
         //if the names in the artistNames list are pokemon names, push them to the front of the list alphabetically
         for (int i = 1; i < artistNames.size(); i++) {
             if (pokeNameChecker(artistNames.get(i))) {
+                System.out.println(artistNames.get(i));
                 pokeNames.add(artistNames.get(i));
                 artistNames.remove(i);
             }
@@ -161,32 +161,41 @@ public class CollectionFragment extends Fragment {
 
         loadArtistList.setOnItemClickListener((parent, view, position, id) -> {
             String selectedArtist = parent.getItemAtPosition(position).toString();
+            ArrayList<CardItem> cardItems;
             if (selectedArtist.equals("All Cards")) {
                 artistSelected = "All Cards";
+                cardSearchText.setText("");
                 loadName.setText(artistSelected);
                 loadArtistList.setVisibility(View.GONE);
                 overlay.setVisibility(View.GONE);
-                populateRecyclerView();
+                cardItems = db.getAllCards();
             } else if (pokeNameChecker(selectedArtist)) {
-                ArrayList<CardItem> cardItems = db.getCardsByCardName(selectedArtist);
-                collectionAdapter = new CollectionAdapter(cardItems, context);
+                cardItems = db.getCardsByCardName(selectedArtist);
                 loadName.setText(selectedArtist);
                 loadArtistList.setVisibility(View.GONE);
                 overlay.setVisibility(View.GONE);
                 artistSelected = selectedArtist;
-                recyclerView.setAdapter(collectionAdapter);
             } else {
-                ArrayList<CardItem> cardItems = db.getCardsByArtist(selectedArtist);
-                //sort the card by name
-                cardItems.sort(Comparator.comparing(CardItem::getCardName));
-                collectionAdapter = new CollectionAdapter(cardItems, context);
+                cardItems = db.getCardsByArtist(selectedArtist);
                 loadName.setText(selectedArtist);
                 loadArtistList.setVisibility(View.GONE);
                 overlay.setVisibility(View.GONE);
                 artistSelected = selectedArtist;
-                recyclerView.setAdapter(collectionAdapter);
             }
 
+            String searchText = cardSearchText.getText().toString().trim();
+            if (!searchText.isEmpty()) {
+                ArrayList<CardItem> filteredList = new ArrayList<>();
+                for (CardItem cardItem : cardItems) {
+                    if (cardItem.getCardName().toLowerCase().startsWith(searchText.toLowerCase())) {
+                        filteredList.add(cardItem);
+                    }
+                }
+                cardItems = filteredList;
+            }
+
+            collectionAdapter = new CollectionAdapter(cardItems, context);
+            recyclerView.setAdapter(collectionAdapter);
         });
 
         overlay.setOnTouchListener((v, event) -> {

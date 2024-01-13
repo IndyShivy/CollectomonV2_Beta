@@ -42,6 +42,7 @@ public class HomeFragment extends Fragment {
     private ArrayAdapter<String> storedArtistNames;
     private AutoCompleteTextView addArtist;
     private BackupRestoreActions backupRestoreActions;
+    ArrayList<String> pokemonNamesList;
 
 
     String[] artistSuggestions = {
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment {
         storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
         listViewArtists.setAdapter(storedArtistNames);
         listViewArtists.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        pokemonNamesList = PokeNameHolder.getInstance().getPokemonNames();
 
 
         backup.setOnClickListener(v -> {
@@ -200,15 +202,19 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+//        artistNames = db.getAllArtistNames();
+//        storedArtistNames.clear();
+//        storedArtistNames.addAll(artistNames);
+//        storedArtistNames.notifyDataSetChanged();
     }
 
     //add artist to the list of artists
     public void addArtistToList(String name) {
         if (!artistNames.contains(name)) {
+
             artistNames.add(name);
             storedArtistNames.notifyDataSetChanged();
             addArtist.setText("");
-
             saveArtistList(artistNames);
             closeKeyboard();
 
@@ -219,8 +225,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
     //save the list of artists to shared preferences
-    private void saveArtistList(ArrayList<String> artistList) {
+    public void saveArtistList(ArrayList<String> artistList) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         artistList.sort(String::compareToIgnoreCase);
         Set<String> set = new HashSet<>(artistList);
@@ -253,13 +260,18 @@ public class HomeFragment extends Fragment {
     public void setArtistNames(ArrayList<String> artistNames) {
         this.artistNames = artistNames;
         artistNames.sort(String::compareToIgnoreCase);
-        //remove all the artist from artistNames that is not in the drop down list
-
-
         storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
+        //save it to the shared preferences
+        saveArtistList(artistNames);
         ListView listViewArtists = requireView().findViewById(R.id.listViewArtists);
         listViewArtists.setAdapter(storedArtistNames);
     }
+
+//    //check if the name is a pokemon name
+//    private boolean pokeNameChecker(String name) {
+//        return pokemonNamesList.contains(name.toLowerCase());
+//    }
+
 
 //    // Web scrape the set names
 //    private void webScrapeSetNames() {
