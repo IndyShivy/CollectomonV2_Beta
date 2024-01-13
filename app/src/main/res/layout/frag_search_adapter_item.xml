@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/white"
+            android:fontFamily="@font/alata"
             android:textStyle="bold" />
 
         <TextView
@@ -32,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
+            android:fontFamily="@font/alata"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
@@ -39,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
+            android:fontFamily="@font/alata"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </LinearLayout>

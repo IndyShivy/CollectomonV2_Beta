@@ -63,6 +63,7 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:hint="@string/click_select_add_artist"
+        android:fontFamily="@font/alata"
         android:inputType="text"
         android:popupBackground="@drawable/frag_home_search_box_dropdown"
         android:textColor="#000000"
@@ -112,6 +113,7 @@
             android:backgroundTint="@color/frag_home_search_add_button"
             android:padding="0dp"
             android:text="@string/backup"
+            android:fontFamily="@font/alata"
             android:textColor="#FFFFFF" />
 
         <Button
@@ -123,6 +125,7 @@
             android:backgroundTint="@color/secondary_colour_blue"
             android:padding="0dp"
             android:text="@string/restore"
+            android:fontFamily="@font/alata"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>
