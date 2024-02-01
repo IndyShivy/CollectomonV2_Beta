@@ -1,8 +1,16 @@
 # Collectomon App
 
-## Introduction
+<table>
+  <tr>
+    <td width="700dp">
+      Welcome to Collectomon, the innovative app for Android users designed to manage, collect, and explore Pokémon cards by artists! Whether you're an avid collector or just starting, Collectomon offers an easy-to-use interface to catalog your cards, discover new ones, and keep track of your growing collection. Dive into a meticulously organised world where every       Pokémon card is at your fingertips!
+    </td>
+    <td>
+      <img src="images/collectomon_logo_blue.png" alt="collectomon_logo_blue" width="256dp" height="256dp"/>
+    </td>
+  </tr>
+</table>
 
-Welcome to Collectomon, the innovative app for Android users designed to manage, collect, and explore Pokémon cards by artists! Whether you're an avid collector or just starting, Collectomon offers an easy-to-use interface to catalog your cards, discover new ones, and keep track of your growing collection. Dive into a meticulously organised world where every Pokémon card is at your fingertips!
 
 ## Features
 
