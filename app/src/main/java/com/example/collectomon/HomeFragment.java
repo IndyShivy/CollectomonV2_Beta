@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+
 //HomeFragment is the first fragment that is displayed when the app is opened
 public class HomeFragment extends Fragment {
     public ArrayList<String> artistNames;
@@ -41,16 +42,16 @@ public class HomeFragment extends Fragment {
     private ArrayAdapter<String> storedArtistNames;
     private AutoCompleteTextView addArtist;
     private BackupRestoreActions backupRestoreActions;
-    //ArrayList<String> setNameList;
-    //stored list of artist names
+    ArrayList<String> pokemonNamesList;
+
 
     String[] artistSuggestions = {
             "0313","Akira Komayama", "Amelicart", "Asako Ito", "Atsuko Nishida", "Chibi",
-            "Eske Yoshinob", "Hasuno", "Hataya", "Hyogonosuke", "Kawayoo", "Kiyotaka Oshiyama",
-            "Kodama", "Kurumitsu", "Kyoko Umemato", "Lee Hyunjung", "Mahou",
+            "Eske Yoshinob", "Hasuno", "Hataya", "Hyogonosuke", "Kawayoo","Kedamahadaitai Yawarakai", "Kiyotaka Oshiyama",
+            "Kodama", "Kurumitsu", "Kyoko Umemoto", "Lee Hyunjung", "Mahou",
             "Megumi Mizutani", "Miki Kudo", "Miki Tanaka", "Mina Nakai", "Misa Tsutsui",
             "Mitsuhiro Arita", "Mizue", "Naoyo Kimura", "Okacheke", "Ooyama", "Oswaldo Kato",
-            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh", "Sowsow", "Sui",
+            "Ryoma Uratsuka", "Saya Tsuruta", "Sekio", "Shibuzoh.", "Sowsow", "Sui","Sumiyoshi Kizuki",
             "Tetsuya Koizumi", "Tika Matsuno", "Tokiya", "You Iribi", "Yuka Morii"
     };
 
@@ -101,6 +102,7 @@ public class HomeFragment extends Fragment {
         storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
         listViewArtists.setAdapter(storedArtistNames);
         listViewArtists.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        pokemonNamesList = PokeNameHolder.getInstance().getPokemonNames();
 
 
         backup.setOnClickListener(v -> {
@@ -200,15 +202,19 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+//        artistNames = db.getAllArtistNames();
+//        storedArtistNames.clear();
+//        storedArtistNames.addAll(artistNames);
+//        storedArtistNames.notifyDataSetChanged();
     }
 
     //add artist to the list of artists
     public void addArtistToList(String name) {
         if (!artistNames.contains(name)) {
+
             artistNames.add(name);
             storedArtistNames.notifyDataSetChanged();
             addArtist.setText("");
-
             saveArtistList(artistNames);
             closeKeyboard();
 
@@ -219,8 +225,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
     //save the list of artists to shared preferences
-    private void saveArtistList(ArrayList<String> artistList) {
+    public void saveArtistList(ArrayList<String> artistList) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         artistList.sort(String::compareToIgnoreCase);
         Set<String> set = new HashSet<>(artistList);
@@ -242,6 +249,7 @@ public class HomeFragment extends Fragment {
 
     }
 
+    //close the keyboard
     private void closeKeyboard() {
         View view = requireActivity().getCurrentFocus();
         if (view != null) {
@@ -249,6 +257,22 @@ public class HomeFragment extends Fragment {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+    public void setArtistNames(ArrayList<String> artistNames) {
+        this.artistNames = artistNames;
+        artistNames.sort(String::compareToIgnoreCase);
+        storedArtistNames = new ArtistAdapter(context, artistNames, sharedPreferences);
+        //save it to the shared preferences
+        saveArtistList(artistNames);
+        ListView listViewArtists = requireView().findViewById(R.id.listViewArtists);
+        listViewArtists.setAdapter(storedArtistNames);
+    }
+
+//    //check if the name is a pokemon name
+//    private boolean pokeNameChecker(String name) {
+//        return pokemonNamesList.contains(name.toLowerCase());
+//    }
+
+
 //    // Web scrape the set names
 //    private void webScrapeSetNames() {
 //        new Thread(() -> {

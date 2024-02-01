@@ -28,7 +28,6 @@
         <item name="itemPaddingBottom">20dp</item>
     </style>
 
-
     <style name="EditTextStyle" parent="Widget.AppCompat.EditText">
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">16sp</item>

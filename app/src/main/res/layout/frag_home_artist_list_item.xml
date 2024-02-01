@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="56dp"
+    android:background="@drawable/frag_home_artists_list_item_rounding"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="@drawable/frag_home_artists_list_item_rounding">>
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/artist_name"
-        android:layout_width="268dp"
+        android:layout_width="214dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/alata"
         android:gravity="center"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/card_count"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/alata"
+        android:gravity="center"
+        android:paddingEnd="10dp"
         android:textColor="@color/white"
         android:textSize="16sp"
-       />
+        tools:ignore="RtlSymmetry" />
 
     <Button
         android:id="@+id/delete_button"
-        android:layout_width="80dp"
+        android:layout_width="86dp"
         android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
         android:backgroundTint="@color/secondary_colour_blue"
-        android:text="X"
+        android:text="@string/x"
         android:textColor="#FFFFFF"
+
         android:textScaleX="1.25" />
 </LinearLayout>
     <!--<?xml version="1.0" encoding="utf-8"?>-->

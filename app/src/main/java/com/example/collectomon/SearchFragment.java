@@ -62,6 +62,8 @@ public class SearchFragment extends Fragment {
     private CardAdapter cardAdapter;
     private ArrayList<CardItem> cardItems;
     private AppCompatActivity activity;
+    ArrayList<String> pokemonNamesList;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,16 +177,20 @@ public class SearchFragment extends Fragment {
         overlay = rootView.findViewById(R.id.overlay);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         overlay.setLayoutParams(params);
-
+        if (pokemonNamesList == null) {
+            pokemonNamesList = new ArrayList<>();
+        }
+        pokemonNamesList = PokeNameHolder.getInstance().getPokemonNames();
 
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(PREFS_FILE_NAME, Context.MODE_PRIVATE);
         List<String> artistNames = new ArrayList<>();
+
         Set<String> artistSet = sharedPreferences.getStringSet(ARTIST_KEY, null);
         if (artistSet != null) {
             artistNames = new ArrayList<>(artistSet);
         }
         Collections.sort(artistNames);
-
+        artistNames.removeIf(this::pokeNameChecker);
 
         searchEditText = rootView.findViewById(R.id.searchCard);
         searchEditText.addTextChangedListener(textWatcher);
@@ -349,6 +355,10 @@ public class SearchFragment extends Fragment {
             InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+    //check if the name is a pokemon name
+    private boolean pokeNameChecker(String name) {
+        return pokemonNamesList.contains(name.toLowerCase());
     }
 }
 

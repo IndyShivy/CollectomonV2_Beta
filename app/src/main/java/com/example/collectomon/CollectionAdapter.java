@@ -2,7 +2,9 @@ package com.example.collectomon;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,12 +56,36 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Vi
         holder.setDetailsTextView.setText(cardItem.getSetDetails());
         holder.cardDetailsTextView.setText(cardItem.getCardDetails());
 
-        holder.removeButton.setOnClickListener(v -> {
-                db.deleteCard(cardItem);
-                cardItems.remove(cardItem);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, getItemCount());
+//        holder.removeButton.setOnClickListener(v -> {
+//                db.deleteCard(cardItem);
+//                cardItems.remove(cardItem);
+//                notifyItemRemoved(position);
+//                notifyItemRangeChanged(position, getItemCount());
+//
+//        });
 
+        holder.removeButton.setOnClickListener(v -> {
+            String cardName = cardItem.getCardName();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogCustom);
+            LayoutInflater backupInflate = LayoutInflater.from(context);
+            View dialogView = backupInflate.inflate(R.layout.frag_home_backup_restore_dialog, null);
+            builder.setView(dialogView);
+            TextView title = dialogView.findViewById(R.id.dialog_title);
+            String titleSet = "Delete Card from Collection";
+            title.setText(titleSet);
+            title.setTextColor(Color.WHITE);
+            TextView message = dialogView.findViewById(R.id.dialog_message);
+            String textSetter = "Remove " + "\"" + cardName + "\"" +" ?";
+            message.setText(textSetter);
+            message.setTextColor(Color.WHITE);  // Set the color
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                        db.deleteCard(cardItem);
+                        cardItems.remove(cardItem);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, getItemCount());
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
         });
 
     }

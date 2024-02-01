@@ -10,8 +10,8 @@ android {
         applicationId "com.indyus.collectomon"
         minSdk 28
         targetSdk 34
-        versionCode 11
-        versionName "4.7"
+        versionCode 12
+        versionName "4.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,4 +41,5 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     //noinspection GradleDependency
     implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 }
