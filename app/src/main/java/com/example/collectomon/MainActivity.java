@@ -250,8 +250,8 @@ public class MainActivity extends AppCompatActivity implements BackupRestoreActi
     private void fetchPokemonNames() {
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
                         .url("https://pokeapi.co/api/v2/pokemon?limit=1200")
                         .build();
 
