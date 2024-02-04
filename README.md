@@ -1,4 +1,4 @@
-# Collectomon App
+# Collectomon
 
 <table>
   <tr>
