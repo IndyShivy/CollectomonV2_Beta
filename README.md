@@ -2,7 +2,7 @@
 
 <table>
   <tr>
-    <td width="600dp">
+    <td width="500dp">
       Welcome to Collectomon, the innovative app for Android users designed to manage, collect, and explore Pokémon cards by artists! Whether you're an avid collector or just starting, Collectomon offers an easy-to-use interface to catalog your cards, discover new ones, and keep track of your growing collection. Dive into a meticulously organised world where every       Pokémon card is at your fingertips!
     </td>
     <td>
